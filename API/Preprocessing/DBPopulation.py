@@ -62,11 +62,6 @@ start = time.time()
 # # df_teams = df_teams_fh_sh.append(df_teams_full)
 # # df = df[["game_id", "mapped_id", "target_group_id", "x_norm",
 # #          "y_norm", "game_time_seconds", "Second_of_game"]]
-
-client = pymongo.MongoClient("mongodb://sh318:test@cluster0-shard-00-00.jjlbq.mongodb.net:27017,cluster0-shard-00-01.jjlbq.mongodb.net:27017,cluster0-shard-00-02.jjlbq.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-vejqlx-shard-0&authSource=admin&retryWrites=true&w=majority")
-db = client["recboard"]
-rps = db["rps"]
-
 # print("Connection built:", time.time()-start)
 
 # record = {}
