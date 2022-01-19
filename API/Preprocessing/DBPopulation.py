@@ -5,6 +5,10 @@ from bson.objectid import ObjectId
 import time
 import numpy as np
 from scipy.spatial import distance_matrix
+from db_meta_connection import DBMeta
+
+import os
+from dotenv import load_dotenv
 
 start = time.time()
 # def create_relative_matrix(df):
@@ -22,10 +26,26 @@ start = time.time()
 #     return rec_mat_norm
 
 
-# path = r'C:/Users/Sebastian Hermann/Documents/WI3/Masterthesis/WebApp/API/Data/All_Games_streams_raw_mirrored_net_sec.csv'
+path = r'C:/Users/Sebastian Hermann/Documents/WI3/Masterthesis/WebApp/API/Data/GameStats.csv'
 # req_cols = ["game_id", "game_time_seconds",
 #             "mapped_id", "target_group_id", "x_norm", "y_norm"]
-# df = pd.read_csv(path, index_col=None, sep=',', decimal=".", usecols=req_cols)
+df = pd.read_csv(path, index_col=None, sep=',', decimal=".")
+
+df_stats_dict = df.to_dict("records")
+
+
+# load_dotenv()
+
+# DB_CONNECTION_META = os.getenv('DB_CONNECTION_META')
+# pymongo.MongoClient(DBMeta._path)
+
+
+STATS = DBMeta.get_DB()["stats"]
+
+for row in df_stats_dict:
+    STATS.insert_one(row)
+
+
 # print("Files Loaded:", time.time()-start)
 
 # player_filter_1 = [9, 10]
@@ -62,11 +82,6 @@ start = time.time()
 # # df_teams = df_teams_fh_sh.append(df_teams_full)
 # # df = df[["game_id", "mapped_id", "target_group_id", "x_norm",
 # #          "y_norm", "game_time_seconds", "Second_of_game"]]
-
-client = pymongo.MongoClient("mongodb://sh318:test@cluster0-shard-00-00.jjlbq.mongodb.net:27017,cluster0-shard-00-01.jjlbq.mongodb.net:27017,cluster0-shard-00-02.jjlbq.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-vejqlx-shard-0&authSource=admin&retryWrites=true&w=majority")
-db = client["recboard"]
-rps = db["rps"]
-
 # print("Connection built:", time.time()-start)
 
 # record = {}
@@ -157,47 +172,47 @@ rps = db["rps"]
 # # result = projects.find({})
 # # print(list(result))
 
-rp_meta = {
-    "game_id": 1,
-    "project_id": 1,
-    "rp_title": "first",
-    "rp_type": "cross_threshold",
-    "threshold": 9,
-    "calc_logic": "avg",
-    "target_group_1_mapped_id_list": [5],
-    "target_group_2_mapped_id_list": [],
-    "cross_group_1_mapped_id_list": [],
-    "cross_group_2_mapped_id_list": [3],
-    "mirror_cord": True,
-    "downsample": {
-        "is_downsampled": False,
-        "downsample_size": 10
-    },
-    "favourite": False
-}
+# rp_meta = {
+#     "game_id": 1,
+#     "project_id": 1,
+#     "rp_title": "first",
+#     "rp_type": "cross_threshold",
+#     "threshold": 9,
+#     "calc_logic": "avg",
+#     "target_group_1_mapped_id_list": [5],
+#     "target_group_2_mapped_id_list": [],
+#     "cross_group_1_mapped_id_list": [],
+#     "cross_group_2_mapped_id_list": [3],
+#     "mirror_cord": True,
+#     "downsample": {
+#         "is_downsampled": False,
+#         "downsample_size": 10
+#     },
+#     "favourite": False
+# }
 
-{
-    "user_name": "test",
-    "game_id": 1,
-    "project_id": 1,
-    "rp_title": "First via api",
-                "rp_type": "threshold",
-                "threshold": 9,
-                "calc_logic": "avg",
-                "target_group_1": [5, 9, 10],
-                "target_group_2": [5, 9, 10],
-                "cross_group_1": [],
-                "cross_group_2": [],
-                "mirror_cord": True,
-                "downsample": 10,
-                "favourite": False,
-                "rqa": {}
-}
+# {
+#     "user_name": "test",
+#     "game_id": 1,
+#     "project_id": 1,
+#     "rp_title": "First via api",
+#                 "rp_type": "threshold",
+#                 "threshold": 9,
+#                 "calc_logic": "avg",
+#                 "target_group_1": [5, 9, 10],
+#                 "target_group_2": [5, 9, 10],
+#                 "cross_group_1": [],
+#                 "cross_group_2": [],
+#                 "mirror_cord": True,
+#                 "downsample": 10,
+#                 "favourite": False,
+#                 "rqa": {}
+# }
 
-# rp_id = rps.insert_one(rp_meta).inserted_id
-result = rps.find_one({"_id":  ObjectId("61d87e808f948f31d67e5a95")})
-json_str = dumps(result)
-print(json_str)
+# # rp_id = rps.insert_one(rp_meta).inserted_id
+# result = rps.find_one({"_id":  ObjectId("61d87e808f948f31d67e5a95")})
+# json_str = dumps(result)
+# print(json_str)
 print(time.time() - start, " : All Files processed")
 # print(tracking_data.count_documents({}))
-client.close()
+# client.close()

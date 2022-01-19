@@ -40,21 +40,41 @@ import * as RPS from '../../actions/RPActions';
 import { useParams } from 'react-router-dom';
 import Backdrop from '@mui/material/Backdrop';
 import RecurrenceAnalysis from './tacticalGroups/RecurrenceAnalysis';
+import Drawer from '@mui/material/Drawer';
+import * as Stats from '../../actions/StatsActions';
 
-const Navbar = () => (
-  <Box sx={{ flexGrow: 1 }}>
-    <AppBar position="static" style={{ minheight: '48px', boxShadow: 'None' }}>
-      <Container maxWidth="xl">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Recurrence Dashboard
+const SideNav = () => {
+  return (
+    <>
+      <div>
+        <Toolbar style={{ paddingTop: '24px' }}>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, fontWeight: '500' }}
+          >
+            Recboard
           </Typography>
-          <Button color="inherit">More Information</Button>
         </Toolbar>
-      </Container>
-    </AppBar>
-  </Box>
-);
+        <Divider />
+        <List>
+          <ListItem button>
+            <ListItemText primary={'Projects'} />
+          </ListItem>
+          <ListItem button>
+            <ListItemText primary={'More Information'} />
+          </ListItem>
+        </List>
+        <Divider />
+        <List>
+          <ListItem button>
+            <ListItemText primary={'Start Use Case Scenarios'} />
+          </ListItem>
+        </List>
+      </div>
+    </>
+  );
+};
 
 const Loader = () => {
   return (
@@ -102,6 +122,7 @@ export default function Main(props) {
       dispatch(Tracking.GetTrackingData(payload));
       dispatch(TGroups.GetTGroups(payload));
       dispatch(RPS.GetRPSInfo(payload));
+      dispatch(Stats.GetStats(project.game_id));
     }
   }, [project]);
 
@@ -125,61 +146,84 @@ export default function Main(props) {
 
   return (
     <>
-      <Navbar />
-      <Container maxWidth="xl">
-        <Box sx={{ bgcolor: '#f8f8f8', height: '93vh' }}>
-          <Box sx={{ width: '100%', borderRadius: '5px' }}>
-            <Grid
-              container
-              spacing={0}
-              alignItems="center"
-              style={{ padding: '24px' }}
-            >
+      <Grid container style={{ height: '100vh' }}>
+        <Grid
+          item
+          xs={1.5}
+          style={{ height: '100vh', background: '#005AE8', color: 'white' }}
+        >
+          <SideNav />
+        </Grid>
+
+        <Grid
+          container
+          item
+          xs={10.5}
+          spacing={0}
+          alignItems="center"
+          style={{ padding: '24px', alignContent: 'flex-start' }}
+        >
+          <Box sx={{ bgcolor: '#f8f8f8', height: '93vh' }}>
+            <Box sx={{ width: '100%', borderRadius: '5px' }}>
               {project && (
                 <>
-                  <Grid item xs={6}>
-                    <Typography
-                      variant="h5"
-                      // gutterBottom
-                      component="div"
-                      fontWeight={500}
-                    >
-                      {project.title}
-                    </Typography>
-                  </Grid>
                   <Grid
+                    container
                     item
-                    xs={2}
-                    style={{ alignSelf: 'flex-end', paddingLeft: '24px' }}
+                    xs={12}
+                    alignItems={'center'}
+                    style={{ paddingBottom: '12px', paddingLeft: '6px' }}
                   >
-                    <Typography
-                      variant="h6"
-                      // gutterBottom
-                      component="div"
-                      fontWeight={500}
-                    >
-                      {'Game' + project.game_id}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} style={{ textAlign: 'right' }}>
-                    <ToggleButtonGroup
-                      color="primary"
-                      value={alignment}
-                      exclusive
-                      onChange={handleChange}
-                      size="small"
-                    >
-                      <ToggleButton value="tacticalgroups">
-                        Tactical Groups
-                      </ToggleButton>
-                      <ToggleButton value="recurrenceanalysis">
-                        Recurrence Analysis
-                      </ToggleButton>
-                    </ToggleButtonGroup>
+                    <Grid item xs={0.5}>
+                      <Avatar>{project.game_id}</Avatar>
+                    </Grid>
+                    <Grid container item xs={7.5}>
+                      <Grid item xs={12}>
+                        <Typography
+                          variant="h6"
+                          // gutterBottom
+                          component="div"
+                          fontWeight={500}
+                        >
+                          {project.title}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography
+                          variant="body2"
+                          // gutterBottom
+                          component="div"
+                          color="text.secondary"
+                          // fontWeight={500}
+                        >
+                          Game {project.game_id}
+                          {/* Datum des Spiels */}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={4} style={{ textAlign: 'right' }}>
+                      <ToggleButtonGroup
+                        color="primary"
+                        value={alignment}
+                        exclusive
+                        onChange={handleChange}
+                        size="small"
+                      >
+                        <ToggleButton value="tacticalgroups">
+                          Tactical Groups
+                        </ToggleButton>
+                        <ToggleButton value="recurrenceanalysis">
+                          Recurrence Analysis
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                    </Grid>
+                    <Grid item xs={12} style={{ paddingTop: '12px' }}>
+                      <Divider />
+                    </Grid>
                   </Grid>
                 </>
               )}
-            </Grid>
+            </Box>
             <Grid container item xs={12}>
               {alignment === 'tacticalgroups' ? (
                 <TacticalGroups />
@@ -188,8 +232,8 @@ export default function Main(props) {
               )}
             </Grid>
           </Box>
-        </Box>
-      </Container>
+        </Grid>
+      </Grid>
     </>
   );
 }

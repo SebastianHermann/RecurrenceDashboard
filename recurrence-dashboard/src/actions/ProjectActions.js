@@ -1,12 +1,14 @@
 import axios from 'axios';
 
-export const GetProjects = () => async (dispatch) => {
+export const GetProjects = (user_name) => async (dispatch) => {
   try {
     dispatch({
       type: 'PROJECTS_LOADING',
     });
 
-    const projects = await axios.get(`http://127.0.0.1:5000/projects`);
+    const projects = await axios.get(
+      `http://127.0.0.1:5000/projects?user_name=${user_name}`
+    );
 
     dispatch({
       type: 'PROJECTS_SUCCESS',
@@ -40,6 +42,19 @@ export const CreateProject = (request) => async (dispatch) => {
     dispatch({
       type: 'PROJECTS_SUCCESS',
       payload: projects.data,
+    });
+  } catch (e) {
+    dispatch({
+      type: 'PROJECTS_FAIL',
+    });
+  }
+};
+
+export const SetUser = (user_name) => async (dispatch) => {
+  try {
+    dispatch({
+      type: 'USER_SUCCESS',
+      payload: user_name,
     });
   } catch (e) {
     dispatch({
