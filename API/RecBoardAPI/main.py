@@ -1,4 +1,5 @@
 import json
+from models.meta_stats import MetaStats
 from models.rps import RPS
 from models.meta_tracking_data import MetaTrackingData
 from models.events import Events
@@ -46,6 +47,15 @@ def teams():
     game_id = request.args.get('game_id', default=None)
     if request.method == "GET":
         result = MetaTeams.get_teams(game_id)
+
+    return Response(result, mimetype='application/json')
+
+
+@app.route('/meta/stats', methods=["GET"])
+def stats():
+    game_id = request.args.get('game_id', default=None)
+    if request.method == "GET":
+        result = MetaStats.get_stats(game_id)
 
     return Response(result, mimetype='application/json')
 
@@ -116,9 +126,10 @@ def tactical_groups(project_id):
 @app.route('/projects', methods=["GET", "POST", "PUT", "DELETE"])
 def projects():
     id = request.args.get('project_id', default=None)
+    user_name = request.args.get('user_name', default=None)
 
     if request.method == "GET":
-        result = Projects.get_project(id)
+        result = Projects.get_project(id, user_name)
 
     if request.method == "POST":
         request_data = request.get_json()

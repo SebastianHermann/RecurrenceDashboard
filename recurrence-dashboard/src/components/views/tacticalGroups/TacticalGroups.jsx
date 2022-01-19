@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import SpeedIcon from '@mui/icons-material/Speed';
+import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -22,6 +23,10 @@ import * as TGroups from '../../../actions/TGroupActions';
 import * as Tracking from '../../../actions/TrackingActions';
 import CreateTGroupDialog from './createTGroupDialog';
 import PitchLive from './pitch_all';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import StatsTable from '../../common/StatsTable';
+import CreateEventDialog from './createEventsDialog';
 
 const Loader = () => {
   return (
@@ -36,20 +41,25 @@ const Loader = () => {
 const TGroupList = (props) => {
   const style = {
     list_element: {
-      background: 'white',
+      // background: 'white',
       overflowY: 'auto',
-      height: '76.4vh',
+      // height: '76.4vh',
     },
   };
 
+  const [selectedGroup, setSelectedGroup] = useState('');
+
   const handleListItemClick = (event, item) => {
+    // console.log('selected tg ', item._id.$oid);
+    setSelectedGroup(item._id.$oid);
     props.handleGroupChange(item.player_list_1, item.player_list_2, item.title);
   };
 
   return (
     <Grid container item xs={12} style={style.list_element}>
       <Grid item xs={12}>
-        <List>
+        <Divider />
+        <List style={{ padding: 0 }}>
           {!props.loading ? (
             <>
               {props.tGroups.map((item) => (
@@ -57,25 +67,53 @@ const TGroupList = (props) => {
                   <ListItemButton
                     // selected={selectedIndex === 0}
                     onClick={(event) => handleListItemClick(event, item)}
+                    style={{ padding: '12px 12px 12px 6px' }}
                   >
                     <Grid container>
-                      <Grid item xs={4}>
-                        <ListItemText
+                      <Grid item xs={6}>
+                        {/* <ListItemText
+                          style={{ fontSize: '14px' }}
                           primary={item.title}
                           secondary={
                             item.player_list_1.length +
                             item.player_list_2.length +
                             ' Players'
                           }
-                        />
+                        /> */}
+                        <Typography
+                          variant="body2"
+                          component="div"
+                          // color="text.secondary"
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            color:
+                              item._id.$oid === selectedGroup
+                                ? '#1976d2'
+                                : 'black',
+                          }}
+                        >
+                          {item.title}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          component="div"
+                          color="text.secondary"
+                          style={{ fontSize: '13px' }}
+                        >
+                          {item.player_list_1.length +
+                            item.player_list_2.length +
+                            ' Players'}
+                        </Typography>
                       </Grid>
-                      <Grid container item xs={8} justifyContent="flex-end">
+                      <Grid container item xs={6} justifyContent="flex-end">
                         {item.player_list_1.map((player) => (
                           <Chip
                             style={{
                               margin: '0 5px 5px 0',
                               background: '#1976d2',
                               color: 'white',
+                              fontSize: '10px',
                             }}
                             size="small"
                             label={player}
@@ -83,7 +121,12 @@ const TGroupList = (props) => {
                         ))}
                         {item.player_list_2.map((player) => (
                           <Chip
-                            style={{ marginLeft: '1%', backround: '#ef476f' }}
+                            style={{
+                              margin: '0 5px 5px 0',
+                              background: '#4b6584',
+                              fontSize: '10px',
+                              color: 'white',
+                            }}
                             size="small"
                             label={player}
                           />
@@ -114,12 +157,12 @@ const Player = (props) => {
   };
 
   return (
-    <Grid container item xs={12} spacing={0} style={style.playerContainer}>
-      {/* <Grid item xs={12} style={{ padding: '0px 0px 12px 0px' }}>
+    <Grid container item xs={12} spacing={0}>
+      <Grid item xs={12} style={{ padding: '0px 0px 12px 0px' }}>
         <Divider />
-      </Grid> */}
+      </Grid>
 
-      <Grid item xs={2} style={{ padding: '0px 0px 24px 45px' }}>
+      <Grid item xs={2} style={{ padding: '0px 0px 20px 30px' }}>
         <Button
           variant="contained"
           size="small"
@@ -165,6 +208,7 @@ export default function TacticalGroups() {
 
   const [openNewDialog, setOpenNewDialog] = useState(false);
   const [openToGroupDialog, setOpenToGroupDialog] = useState(false);
+  const [openEventDialog, setOpenEventDialog] = useState(false);
 
   const { projects } = useSelector((state) => state.Projects);
   const [project, setProject] = useState();
@@ -185,6 +229,7 @@ export default function TacticalGroups() {
 
   const { trackingData } = useSelector((state) => state.Tracking);
   const { tGroups, loading } = useSelector((state) => state.TGroups);
+  const { stats } = useSelector((state) => state.Stats);
 
   useEffect(() => {
     let project = projects.find(
@@ -332,8 +377,7 @@ export default function TacticalGroups() {
           </Grid>
         </Grid>
       </Box> */}
-      <Grid container style={{ background: '#f8f8f8' }}>
-        {/* <Backdrop
+      {/* <Backdrop
           sx={{
             color: '#fff',
             zIndex: (theme) => theme.zIndex.drawer + 1,
@@ -343,7 +387,11 @@ export default function TacticalGroups() {
         >
           <CircularProgress color="inherit" />
         </Backdrop> */}
-        <Grid item xs={5} container style={{ padding: '0px 24px' }}>
+      <Grid
+        container
+        style={{ padding: '12px 0px 0px 0px ', alignItems: 'flex-start' }}
+      >
+        <Grid item xs={3} container style={{ padding: '0px 12px 0px 0px' }}>
           <Grid
             item
             xs={6}
@@ -351,14 +399,49 @@ export default function TacticalGroups() {
             style={{
               textAlign: 'left',
               alignSelf: 'flex-end',
-              paddingBottom: '24px',
+              paddingBottom: '12px',
             }}
           >
+            <Typography
+              variant="h6"
+              // gutterBottom
+              component="div"
+              color="text.secondary"
+              // fontWeight={500}
+            >
+              Tactical Group
+              {/* Datum des Spiels */}
+            </Typography>
+            <Typography
+              variant="body2"
+              // gutterBottom
+              component="div"
+              color="text.secondary"
+              // fontWeight={500}
+            >
+              {tGroups.length == 1
+                ? '1 Tactical Group'
+                : tGroups.length + ' Tactical Groups'}
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={6}
+            // md={2}
+            style={{
+              textAlign: 'right',
+              alignSelf: 'center',
+              paddingBottom: '12px',
+            }}
+          >
+            {/* <IconButton color="primary">
+              <AddIcon onClick={() => setOpenNewDialog(true)} />
+            </IconButton> */}
             <Button
-              variant="contained"
+              // variant="outlined"
               startIcon={<AddIcon />}
               onClick={() => setOpenNewDialog(true)}
-              size="medium"
+              size="small"
               style={{ minWidth: '100px' }}
             >
               New
@@ -381,20 +464,6 @@ export default function TacticalGroups() {
               <></>
             )}
           </Grid>
-          <Grid
-            item
-            xs={6}
-            // md={2}
-            style={{
-              textAlign: 'right',
-              alignSelf: 'flex-end',
-              paddingBottom: '24px',
-            }}
-          >
-            {tGroups.length == 1
-              ? '1 Tactical Group'
-              : tGroups.length + ' Tactical Groups'}
-          </Grid>
 
           <TGroupList
             handleGroupChange={handleGroupChange}
@@ -407,29 +476,91 @@ export default function TacticalGroups() {
           container
           spacing={0}
           item
-          xs={7}
+          xs={6}
           alignItems="baseline"
-          style={{ alignContent: 'start', paddingRight: '24px' }}
+          style={{
+            alignContent: 'start',
+            padding: '0px 12px',
+            alignItems: 'flex-start',
+          }}
         >
-          {/* <Grid item xs={12}>
-                <Button onClick={handleSecondChange}>{gameSecond}</Button>
-              </Grid> */}
-
           {project && gameData.length ? (
             <>
-              <PitchLive
-                gameData={gameData[gameSecond]}
-                handleDotClick={handleDotClick}
-              />
-              <Player
-                play={play}
-                speed={speed}
-                handlePlayPause={handlePlayPause}
-                handleSpeed={handleSpeed}
-                maxSeconds={trackingData.length - 1}
-                handleSlide={handleSlide}
-                sliderValue={sliderValue}
-              />
+              <Grid
+                container
+                style={{
+                  background: 'white',
+                  borderRadius: '6px',
+                }}
+              >
+                <Grid
+                  item
+                  xs={12}
+                  container
+                  style={{ padding: '12px 30px 12px 30px' }}
+                >
+                  <Grid item xs={4}>
+                    <Typography
+                      variant="h6"
+                      // gutterBottom
+                      component="div"
+                      color="text.secondary"
+                      // fontWeight={500}
+                    >
+                      Tactical Play
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={4}
+                    style={{ textAlign: 'center', alignSelf: 'center' }}
+                  >
+                    <Typography
+                      variant="body2"
+                      compnent="div"
+                      color="text.secondary"
+                    >
+                      <AccessTimeIcon
+                        style={{
+                          color: 'darkgray',
+                          fontSize: '18px',
+                          verticalAlign: 'middle',
+                          marginRight: '12px',
+                        }}
+                      />
+                      {gameSecond}
+                      {' s'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4} style={{ textAlign: 'right' }}>
+                    <Button
+                      size="small"
+                      startIcon={<RestartAltIcon />}
+                      onClick={() => setTGroup('all')}
+                      disabled={tGroup === 'all'}
+                    >
+                      Reset
+                    </Button>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} style={{ padding: '7px 0px' }}>
+                  <Divider />
+                </Grid>
+
+                <PitchLive
+                  gameData={gameData[gameSecond]}
+                  handleDotClick={handleDotClick}
+                />
+                <Player
+                  play={play}
+                  speed={speed}
+                  handlePlayPause={handlePlayPause}
+                  handleSpeed={handleSpeed}
+                  maxSeconds={trackingData.length - 1}
+                  handleSlide={handleSlide}
+                  sliderValue={sliderValue}
+                />
+              </Grid>
               <Grid container item xs={12} style={{ paddingTop: '18px' }}>
                 <Grid item xs={6} style={{ marginBottom: '6px' }}>
                   Target Team
@@ -470,7 +601,11 @@ export default function TacticalGroups() {
                 <Grid item xs={6} style={{ minHeight: '30px' }}>
                   {playerList2.map((player) => (
                     <Chip
-                      style={{ marginRight: '1%', backround: '#ef476f' }}
+                      style={{
+                        marginRight: '1%',
+                        background: '#4B6584',
+                        color: 'white',
+                      }}
                       size="small"
                       label={player}
                       onClick={() =>
@@ -540,6 +675,78 @@ export default function TacticalGroups() {
           ) : (
             <Loader />
           )}
+        </Grid>
+        <Grid item xs={3} container style={{ padding: '0px 12px' }}>
+          <Grid
+            item
+            xs={12}
+            // md={2}
+          >
+            <div
+              style={{
+                textAlign: 'left',
+                alignSelf: 'flex-end',
+
+                background: 'white',
+                borderRadius: '6px',
+              }}
+            >
+              <StatsTable stats={stats} />
+            </div>
+          </Grid>
+          {/* NEWWWWW */}
+          <Grid container item xs={12} style={{ padding: '24px 6px' }}>
+            <Grid
+              item
+              xs={6}
+              // md={2}
+              style={{
+                textAlign: 'left',
+                alignSelf: 'flex-end',
+                paddingBottom: '12px',
+              }}
+            >
+              <Typography
+                variant="h6"
+                // gutterBottom
+                component="div"
+                color="text.secondary"
+                // fontWeight={500}
+              >
+                Match Events
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={6}
+              // md={2}
+              style={{
+                textAlign: 'right',
+                alignSelf: 'center',
+                paddingBottom: '12px',
+              }}
+            >
+              <IconButton color="primary">
+                <AddIcon onClick={() => setOpenEventDialog(true)} />
+              </IconButton>
+              {openEventDialog ? (
+                <CreateEventDialog
+                  open={true}
+                  handleClose={() => setOpenEventDialog(false)}
+                  game={project.game_id}
+                  gameSecond={gameSecond}
+                />
+              ) : (
+                <></>
+              )}
+            </Grid>
+
+            <TGroupList
+              handleGroupChange={handleGroupChange}
+              tGroups={tGroups}
+              loading={loading}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>

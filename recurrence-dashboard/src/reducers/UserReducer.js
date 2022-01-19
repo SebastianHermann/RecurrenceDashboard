@@ -1,26 +1,17 @@
 const DefaultState = {
   loading: false,
-  projects: [],
-  user: 'test',
+  user: {},
   errorMsg: '',
 };
 
-const ProjectReducer = (state = DefaultState, action) => {
+const UserReducer = (state = DefaultState, action) => {
   switch (action.type) {
-    case 'PROJECTS_LOADING':
+    case 'USER_LOADING':
       return {
         ...state,
         loading: true,
         errorMsg: '',
       };
-    case 'PROJECTS_SUCCESS':
-      return {
-        ...state,
-        loading: false,
-        projects: action.payload,
-        errorMsg: '',
-      };
-
     case 'USER_SUCCESS':
       return {
         ...state,
@@ -29,11 +20,11 @@ const ProjectReducer = (state = DefaultState, action) => {
         errorMsg: '',
       };
 
-    case 'PROJECTS_FAIL':
+    case 'USER_FAIL':
       return {
         ...state,
         loading: false,
-        errorMsg: 'Unable to get projects',
+        errorMsg: 'Unable to get USER',
       };
 
     default:

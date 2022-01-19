@@ -72,7 +72,7 @@ export default function CreateTGroupDialog(props) {
               <TextField
                 id="standard-basic"
                 label="Title"
-                variant="standard"
+                variant="outlined"
                 value={title}
                 onChange={handleTitleChange}
                 fullWidth

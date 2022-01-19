@@ -24,7 +24,7 @@ class Projects():
         project_collection = Projects.singleton()
         try:
             project = {}
-            project["user_name"] = user_name
+            project["user_name"] = request_data.get("user_name", user_name)
             project["game_id"] = request_data["game_id"]
             project["title"] = request_data["title"]
             project["game_result"] = request_data["game_result"]
@@ -32,7 +32,7 @@ class Projects():
 
             project_collection.insert_one(project)
             result = project_collection.find(
-                {"user_name": user_name})
+                {"user_name": request_data.get("user_name", user_name)})
             json_str = dumps(result)
 
             return json_str
