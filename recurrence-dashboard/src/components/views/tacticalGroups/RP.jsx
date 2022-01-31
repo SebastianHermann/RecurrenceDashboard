@@ -3,10 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import Plotly from 'plotly.js-cartesian-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { Grid, Typography } from '@mui/material';
+import GridLoader from '../../../static/Loaders/grid.svg';
 
 const Plot = createPlotlyComponent(Plotly);
 
 export default function RP(props) {
+  const matchesXXLarge = useMediaQuery('(min-width:1710px)');
+  const matchesXLarge = useMediaQuery('(min-width:1610px)');
+  const matchesLarge = useMediaQuery('(min-width:1510px)');
   const matchesMedium = useMediaQuery('(min-width:1410px)');
   const matchesSmall = useMediaQuery('(min-width:1310px)');
   const [timeSelection, setTimeSelection] = useState([1, 1]);
@@ -28,11 +33,30 @@ export default function RP(props) {
     props.handleXYSelection(event);
   };
 
-  let size = matchesMedium ? 430 : matchesSmall ? 400 : 300;
+  let size = matchesXXLarge
+    ? 430
+    : matchesXLarge
+    ? 400
+    : matchesLarge
+    ? 370
+    : matchesMedium
+    ? 340
+    : matchesSmall
+    ? 310
+    : 280;
 
   return (
-    <>
-      {selectedRP.data ? (
+    <Grid
+      item
+      xs={12}
+      style={{
+        alignContent: 'center',
+        // minHeight: '400px',
+        // maxHeight: '430px',
+        height: `${size}px`,
+      }}
+    >
+      {selectedRP.data && !selectedRPLoading ? (
         <>
           <div
             style={{
@@ -46,33 +70,15 @@ export default function RP(props) {
             {'   '} Time Y: {timeSelection[1] + 's'}
           </div>
           <Plot
-            // style={{ width: '400px' }}
-            config={{ responsive: true }}
+            style={{ display: 'none' }}
             data={[
-              // {
-              //   z: selectedRP.data,
-              //   type: 'heatmap',
-              //   colorscale: [
-              //     [0, 'rgb(255, 255, 255)'],
-              //     [1, 'rgb(0, 0, 0)'],
-              //   ],
-              //   showscale: false,
-              //   zsmooth: false,
-              //   yaxis: 'y2',
-              //   xaxis: 'x2',
-              //   hovermode: false,
-              // },
               {
-                z: selectedRP.data,
+                z: selectedRP.data ? selectedRP.data : [[]],
                 type: 'heatmap',
                 colorscale: [
                   [0, 'rgb(255, 255, 255)'],
-                  [1, 'rgb(0, 0, 0)'],
+                  [1, '#1f2041'],
                 ],
-                // colorbar: {
-                //   tick0: 0,
-                //   dtick: 0,
-                // },
                 zsmooth: false,
                 showscale: false,
                 name: 'RP',
@@ -85,72 +91,54 @@ export default function RP(props) {
               mirror: true,
 
               margin: {
-                l: 40,
+                l: 50,
                 r: 24,
-                b: 40,
-                t: 30,
+                b: 42,
+                t: 32,
                 pad: 5,
               },
               xaxis: {
-                linecolor: 'black',
+                linecolor: '#1f2041',
                 linewidth: 1,
                 mirror: true,
+                tickfont: {
+                  color: '#1f2041',
+                },
               },
               yaxis: {
-                linecolor: 'black',
+                linecolor: '#1f2041',
                 linewidth: 1,
                 mirror: true,
                 autorange: 'reversed',
+                tickfont: {
+                  color: '#1f2041',
+                },
               },
-
-              // automargin: true,
-              // yaxis2: {
-              //   // title: 'Events',
-              //   overlaying: 'y',
-              //   side: 'right',
-              //   tickvals: [0, 100, 105, 107, 200, 210, 240, 245, 250],
-              //   ticktext: [
-              //     'Start',
-              //     '⚽',
-              //     '🥅',
-              //     '✋',
-              //     '🟥',
-              //     '🟨',
-              //     '🦵',
-              //     '📺',
-              //     '🚩',
-              //   ],
-              //   tickfont: {
-              //     size: '14',
-              //   },
-              // },
-              // xaxis2: {
-              //   // title: 'Events',
-              //   overlaying: 'x',
-              //   side: 'top',
-              //   tickvals: [0, 100, 105, 107, 200, 210, 240, 245, 250],
-              //   ticktext: [
-              //     'Start',
-              //     '⚽',
-              //     '🥅',
-              //     '✋',
-              //     '🟥',
-              //     '🟨',
-              //     '🦵',
-              //     '📺',
-              //     '🚩',
-              //   ],
-              //   tickfont: {
-              //     size: '14',
-              //   },
-              //   tickangle: '0',
-              // },
             }}
           />
         </>
       ) : (
-        <></>
+        <Grid
+          item
+          xs={12}
+          style={{
+            alignItems: 'center',
+            textAlign: 'center',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {selectedRPLoading ? (
+            <img src={GridLoader} />
+          ) : (
+            <Typography className="title-5">
+              Create or Select a Recurrence Plot to display.
+            </Typography>
+          )}
+        </Grid>
       )}
-    </>
+    </Grid>
   );
 }

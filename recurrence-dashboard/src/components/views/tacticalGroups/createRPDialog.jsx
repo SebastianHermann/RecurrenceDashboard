@@ -24,29 +24,19 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Checkbox from '@mui/material/Checkbox';
 import { useDispatch, useSelector } from 'react-redux';
-import * as RP from '../../../actions/RPActions';
-// import Draggable from 'react-draggable';
-
-// function PaperComponent(props) {
-//   return (
-//     <Draggable
-//       handle="#draggable-dialog-title"
-//       cancel={'[class*="MuiDialogContent-root"]'}
-//     >
-//       <Paper {...props} />
-//     </Draggable>
-//   );
-// }
+import * as RP from '../../../actions/RQAActions';
+import { useParams } from 'react-router-dom';
 
 export default function CreateRPDialog(props) {
   const dispatch = useDispatch();
+  let params = useParams();
 
-  const [project, setProject] = useState(props.project);
   const { tGroups } = useSelector((state) => state.TGroups);
+  const { projects } = useSelector((state) => state.Projects);
 
   const defaultRP = {
-    game_id: project.game_id,
-    project_id: project._id.$oid,
+    project_id: '',
+    game_id: '',
     rp_title: '',
     rp_type: 'threshold',
     target_tactical_group_id: '',
@@ -65,7 +55,12 @@ export default function CreateRPDialog(props) {
   const [rp, setRP] = useState(defaultRP);
   const [advancedToggle, setAdvancedToggle] = useState(false);
 
-  useEffect(() => {});
+  useEffect(() => {
+    let project = projects.find(
+      (project) => project._id.$oid === params.project_id
+    );
+    setRP({ ...rp, game_id: project.game_id, project_id: project._id.$oid });
+  }, []);
 
   const handleTitle = (event, value) => {
     setRP({ ...rp, rp_title: event.target.value });
@@ -86,8 +81,6 @@ export default function CreateRPDialog(props) {
       target_group_2: tGroup.player_list_2,
     };
     setRP(newRp);
-    // get id and Players of group 1 and group 2
-    // update
   };
 
   const handleCrossTGroupSelection = (event, value) => {
@@ -126,7 +119,6 @@ export default function CreateRPDialog(props) {
   const handleSave = () => {
     console.log('rp to save', rp);
     dispatch(RP.CreateRP(rp));
-    // dispatch(RP.GetRPSInfo(project));
     props.handleClose();
   };
 

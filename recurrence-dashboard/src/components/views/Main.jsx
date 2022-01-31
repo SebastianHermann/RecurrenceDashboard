@@ -1,113 +1,97 @@
-import React, { useState, useEffect, useRef } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import AddIcon from '@mui/icons-material/Add';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CircularProgress from '@mui/material/CircularProgress';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import FolderIcon from '@mui/icons-material/Folder';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CloseIcon from '@mui/icons-material/Close';
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
-import ListItemButton from '@mui/material/ListItemButton';
-import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
-import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
-import Chip from '@mui/material/Chip';
-import Slider from '@mui/material/Slider';
-import Divider from '@mui/material/Divider';
-import SpeedIcon from '@mui/icons-material/Speed';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { BrowserRouter, Routes, Route, Switch } from 'react-router-dom';
-import TacticalGroups from './tacticalGroups/TacticalGroups';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import * as Events from '../../actions/EventActions';
+import * as RPS from '../../actions/RPActions';
+import * as Stats from '../../actions/StatsActions';
 import * as TGroups from '../../actions/TGroupActions';
 import * as Tracking from '../../actions/TrackingActions';
-import * as RPS from '../../actions/RPActions';
-import { useParams } from 'react-router-dom';
-import Backdrop from '@mui/material/Backdrop';
-import RecurrenceAnalysis from './tacticalGroups/RecurrenceAnalysis';
-import Drawer from '@mui/material/Drawer';
-import * as Stats from '../../actions/StatsActions';
 
-const SideNav = () => {
+const SideNav = (props) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  let params = useParams();
+
+  const [selectedTab, setSelectedTab] = useState('tacticalgroups');
+
+  const handleNavElementClick = (event, value) => {
+    setSelectedTab(value);
+
+    navigate('/projects/' + params.project_id + '/' + value);
+  };
+
+  const handleProjectsNavClick = () => {
+    dispatch({ type: 'TRACKING_CLEAR' });
+    navigate('/projects');
+  };
+
   return (
     <>
-      <div>
-        <Toolbar style={{ paddingTop: '24px' }}>
+      <Toolbar style={{ paddingTop: '24px' }}></Toolbar>
+      <Grid container>
+        <Grid item xs={12}>
           <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, fontWeight: '500' }}
+            className="sidenav-container-item"
+            onClick={handleProjectsNavClick}
           >
-            Recboard
+            Projects
           </Typography>
-        </Toolbar>
-        <Divider />
-        <List>
-          <ListItem button>
-            <ListItemText primary={'Projects'} />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary={'More Information'} />
-          </ListItem>
-        </List>
-        <Divider />
-        <List>
-          <ListItem button>
-            <ListItemText primary={'Start Use Case Scenarios'} />
-          </ListItem>
-        </List>
-      </div>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            className={
+              selectedTab === 'tacticalgroups'
+                ? 'sidenav-container-item-active'
+                : 'sidenav-container-item'
+            }
+            onClick={(event) => handleNavElementClick(event, 'tacticalgroups')}
+          >
+            Tactical Groups
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            className={
+              selectedTab === 'recurrenceanalysis'
+                ? 'sidenav-container-item-active'
+                : 'sidenav-container-item'
+            }
+            onClick={(event) =>
+              handleNavElementClick(event, 'recurrenceanalysis')
+            }
+          >
+            Recurrence Analysis
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography
+            className={
+              selectedTab === 'recurrencecomparison'
+                ? 'sidenav-container-item-active'
+                : 'sidenav-container-item'
+            }
+            onClick={(event) =>
+              handleNavElementClick(event, 'recurrencecomparison')
+            }
+          >
+            Recurrence Comparison
+          </Typography>
+        </Grid>
+      </Grid>
     </>
-  );
-};
-
-const Loader = () => {
-  return (
-    <Grid item xs={12}>
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Box>
-    </Grid>
   );
 };
 
 export default function Main(props) {
   const dispatch = useDispatch();
 
-  // get tactical groups by project id
-  // useEffect(() => {
-  //   // dispatch(Tracking.GetTrackingData(payload));
-  //   dispatch(TGroups.GetTGroups(params));
-  // }, []);
-
-  // useEffect(()=>{
-
-  // })
   let params = useParams();
 
   const { projects } = useSelector((state) => state.Projects);
   const [project, setProject] = useState();
-
-  const { tGroups } = useSelector((state) => state.TGroups);
-  const { trackingData } = useSelector((state) => state.Tracking);
-  const { rpsLoading, rps, selectedRPLoading, selectedRP } = useSelector(
-    (state) => state.RecurrenceAnalysis
-  );
 
   useEffect(() => {
     let project = projects.find(
@@ -123,116 +107,17 @@ export default function Main(props) {
       dispatch(TGroups.GetTGroups(payload));
       dispatch(RPS.GetRPSInfo(payload));
       dispatch(Stats.GetStats(project.game_id));
+      dispatch(Events.GetEvents(project._id.$oid));
     }
   }, [project]);
-
-  // useEffect(() => {
-  //   console.log(rps.length, !selectedRP.length);
-  //   if (rps.length && !selectedRP.length) {
-  //     dispatch(RPS.GetRP(rps[0]));
-  //     console.log('Trigger Creation of excisting RP');
-  //   }
-  // }, [rps]);
-
-  useEffect(() => {
-    console.log('Selected is:', selectedRP);
-  }, [selectedRP]);
-
-  const [alignment, setAlignment] = React.useState('tacticalgroups');
-
-  const handleChange = (event, newAlignment) => {
-    setAlignment(newAlignment);
-  };
 
   return (
     <>
       <Grid container style={{ height: '100vh' }}>
-        <Grid
-          item
-          xs={1.5}
-          style={{ height: '100vh', background: '#005AE8', color: 'white' }}
-        >
+        <Grid item xs={1} style={{ height: '100vh' }}>
           <SideNav />
         </Grid>
-
-        <Grid
-          container
-          item
-          xs={10.5}
-          spacing={0}
-          alignItems="center"
-          style={{ padding: '24px', alignContent: 'flex-start' }}
-        >
-          <Box sx={{ bgcolor: '#f8f8f8', height: '93vh' }}>
-            <Box sx={{ width: '100%', borderRadius: '5px' }}>
-              {project && (
-                <>
-                  <Grid
-                    container
-                    item
-                    xs={12}
-                    alignItems={'center'}
-                    style={{ paddingBottom: '12px', paddingLeft: '6px' }}
-                  >
-                    <Grid item xs={0.5}>
-                      <Avatar>{project.game_id}</Avatar>
-                    </Grid>
-                    <Grid container item xs={7.5}>
-                      <Grid item xs={12}>
-                        <Typography
-                          variant="h6"
-                          // gutterBottom
-                          component="div"
-                          fontWeight={500}
-                        >
-                          {project.title}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography
-                          variant="body2"
-                          // gutterBottom
-                          component="div"
-                          color="text.secondary"
-                          // fontWeight={500}
-                        >
-                          Game {project.game_id}
-                          {/* Datum des Spiels */}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={4} style={{ textAlign: 'right' }}>
-                      <ToggleButtonGroup
-                        color="primary"
-                        value={alignment}
-                        exclusive
-                        onChange={handleChange}
-                        size="small"
-                      >
-                        <ToggleButton value="tacticalgroups">
-                          Tactical Groups
-                        </ToggleButton>
-                        <ToggleButton value="recurrenceanalysis">
-                          Recurrence Analysis
-                        </ToggleButton>
-                      </ToggleButtonGroup>
-                    </Grid>
-                    <Grid item xs={12} style={{ paddingTop: '12px' }}>
-                      <Divider />
-                    </Grid>
-                  </Grid>
-                </>
-              )}
-            </Box>
-            <Grid container item xs={12}>
-              {alignment === 'tacticalgroups' ? (
-                <TacticalGroups />
-              ) : (
-                <RecurrenceAnalysis project={project} />
-              )}
-            </Grid>
-          </Box>
-        </Grid>
+        <Outlet />
       </Grid>
     </>
   );

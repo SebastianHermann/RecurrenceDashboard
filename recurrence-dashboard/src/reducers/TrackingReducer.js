@@ -1,5 +1,5 @@
 const DefaultState = {
-  loading: false,
+  loadingTrackingData: false,
   trackingData: [],
   errorMsg: '',
 };
@@ -18,6 +18,10 @@ const TrackingReducer = (state = DefaultState, action) => {
         loading: false,
         trackingData: action.payload,
         errorMsg: '',
+      };
+    case 'TRACKING_CLEAR':
+      return {
+        ...DefaultState,
       };
 
     case 'TRACKING_FAIL':
