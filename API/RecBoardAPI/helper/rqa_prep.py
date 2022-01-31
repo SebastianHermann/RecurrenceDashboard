@@ -1,6 +1,7 @@
 import numpy as np
 from itertools import groupby
 from collections import Counter
+from bson.objectid import ObjectId
 ###### START: Preparation #####
 
 
@@ -176,11 +177,16 @@ def numpy_fillna(data):
     return out
 
 
-def get_rqas(rp_thrsld):
+def get_rqas(rp_thrsld, rps_collection, rp_id):
     rqa = {}
     rr_n = np.sum(rp_thrsld)
     rr_z = len(rp_thrsld)**2
     rr = rr_n / rr_z
+
+    # Insert rr to RP-ID
+    query = {"_id": ObjectId(rp_id)}
+    newvalues = {"$set": {"rr": rr}}
+    rps_collection.update_one(query, newvalues)
 
     min_chain_length = 3
 
@@ -207,7 +213,16 @@ def get_rqas(rp_thrsld):
             continue
 
     lam = lam_z / rr_n
+    # Insert lam to RP-ID
+    query = {"_id": ObjectId(rp_id)}
+    newvalues = {"$set": {"lam": lam}}
+    rps_collection.update_one(query, newvalues)
+
     tt = lam_z / tt_n
+    # Insert tt to RP-ID
+    query = {"_id": ObjectId(rp_id)}
+    newvalues = {"$set": {"tt": tt}}
+    rps_collection.update_one(query, newvalues)
 
     rqa["rr"] = rr
     rqa["lam"] = lam
@@ -222,7 +237,12 @@ def get_rqas(rp_thrsld):
         entr_p = p * np.log2(p)
         entr += entr_p
 
-    rqa["entr-v"] = entr*(-1)
+    entr_v = entr*(-1)
+    rqa["entr-v"] = entr_v
+    # Insert entr-v to RP-ID
+    query = {"_id": ObjectId(rp_id)}
+    newvalues = {"$set": {"entr-v": entr_v}}
+    rps_collection.update_one(query, newvalues)
 
     ######## Diagonal RQA ##############
 
@@ -239,7 +259,7 @@ def get_rqas(rp_thrsld):
 
     result_list = []
     det_z = 0
-    ll_n = len(diagonal_chains)
+    l_n = len(diagonal_chains)
 
     for item in diagonal_chains:
 
@@ -256,20 +276,32 @@ def get_rqas(rp_thrsld):
             continue
 
     det = det_z / rr_n
-    ll = det_z / ll_n
+    # Insert det to RP-ID
+    query = {"_id": ObjectId(rp_id)}
+    newvalues = {"$set": {"det": det}}
+    rps_collection.update_one(query, newvalues)
+    l = det_z / l_n
+    # Insert l to RP-ID
+    query = {"_id": ObjectId(rp_id)}
+    newvalues = {"$set": {"l": l}}
+    rps_collection.update_one(query, newvalues)
 
     rqa["det"] = det
-    rqa["ll"] = ll
+    rqa["l"] = l
 
     entr = 0
     chain_length_list = dict(Counter(result_list))  # {length1, amount1, ...}
 
     for key in chain_length_list:
 
-        p = chain_length_list[key] / ll_n
+        p = chain_length_list[key] / l_n
         entr_p = p * np.log2(p)
         entr += entr_p
 
     rqa["entr"] = entr*(-1)
+    # Insert entr to RP-ID
+    query = {"_id": ObjectId(rp_id)}
+    newvalues = {"$set": {"entr": entr}}
+    rps_collection.update_one(query, newvalues)
 
     return rqa

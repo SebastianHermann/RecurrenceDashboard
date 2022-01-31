@@ -90,7 +90,7 @@ def events(project_id):
 
     if request.method == "POST":
         request_data = request.get_json()
-        result = Events.create_event(project_id, request_data)
+        result = Events.create_event(request_data)
 
     if request.method == "PUT":
         request_data = request.get_json()
@@ -165,6 +165,16 @@ def recurrence_plots(project_id):
     return Response(result, mimetype='application/json')
 
 
+@app.route('/rps/<project_id>/meta', methods=["GET", "POST", "PUT", "DELETE"])
+def recurrence_plots_meta(project_id):
+
+    if request.method == 'POST':
+        request_data = request.get_json()
+        result = RPS.create_meta_rp(df, request_data)
+
+    return Response(result, mimetype='application/json')
+
+
 @app.route('/rp/<id>', methods=["GET", "PUT"])
 def recurrence_plot(id):
 
@@ -173,6 +183,16 @@ def recurrence_plot(id):
 
     if request.method == 'PUT':
         result = RPS.update_rp(id, df)
+
+    return Response(result, mimetype='application/json')
+
+
+@app.route('/rp/<id>/rqa', methods=["GET", "PUT"])
+def rqa(id):
+
+    if request.method == 'GET':
+        # return a list of the database object of the selected rp with its rqa-params
+        result = RPS.get_rqa(id)
 
     return Response(result, mimetype='application/json')
 
