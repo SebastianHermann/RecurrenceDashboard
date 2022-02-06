@@ -19,23 +19,23 @@ class Events():
         return Events.collection
 
     @staticmethod
-    def create_event(project_id, request_data, user_name="test"):
+    def create_event(request_data):
         event_collection = Events.singleton()
 
         try:
             event = {}
-            event["project_id"] = project_id
-            event["user_name"] = user_name
+            event["project_id"] = request_data["project_id"]
             event["game_id"] = request_data["game_id"]
             event["title"] = request_data["title"]
             event["description"] = request_data["description"]
             event["second"] = request_data["second"]
-            event["source"] = request_data["source"]
+            event["source"] = request_data.get("source", "User Input")
+            event["involvedTeams"] = request_data.get("involvedTeams", "both")
 
             event_collection.insert_one(event)
 
             result = event_collection.find(
-                {"project_id": request_data["project_id"], "user_name": user_name})
+                {"project_id": request_data["project_id"]})
             json_str = dumps(result)
             return json_str
 

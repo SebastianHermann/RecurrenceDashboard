@@ -6,7 +6,16 @@ import Divider from '@mui/material/Divider';
 export default function StatsTable(props) {
   return (
     <>
-      <Grid container item xs={12} style={{ padding: '24px' }}>
+      <Grid
+        container
+        item
+        xs={12}
+        style={{
+          padding: '24px',
+          border: '1px solid rgb(238, 238, 238)',
+          borderRadius: '8px',
+        }}
+      >
         {props.stats ? (
           <>
             <Grid container item xs={12} alignItems={'center'}>
@@ -14,11 +23,11 @@ export default function StatsTable(props) {
                 item
                 xs={5}
                 style={{
+                  fontSize: '20px',
                   fontWeight: '500',
-                  fontSize: '18px',
                   color:
                     props.stats.HomeTeam === 'Leverkusen'
-                      ? '#1976d2'
+                      ? '#55a87b'
                       : '#4A5268',
                 }}
               >
@@ -28,6 +37,7 @@ export default function StatsTable(props) {
                 item
                 xs={2}
                 style={{ fontWeight: '500', textAlign: 'center' }}
+                className="title-5"
               >
                 <span>
                   {props.stats.Full_Time_Home_Team_Goals +
@@ -47,13 +57,13 @@ export default function StatsTable(props) {
                 item
                 xs={5}
                 style={{
-                  textAlign: 'right',
+                  fontSize: '20px',
                   fontWeight: '500',
-                  fontSize: '18px',
+                  textAlign: 'right',
                   color:
                     props.stats.AwayTeam === 'Leverkusen'
-                      ? '#1976d2'
-                      : '#4A5268',
+                      ? '#55a87b'
+                      : '#e01a4f',
                 }}
               >
                 {props.stats.AwayTeam}
@@ -69,12 +79,17 @@ export default function StatsTable(props) {
               style={{
                 fontWeight: '500',
                 color:
-                  props.stats.HomeTeam === 'Leverkusen' ? '#1976d2' : '#4A5268',
+                  props.stats.HomeTeam === 'Leverkusen' ? '#55a87b' : '#e01a4f',
               }}
             >
               {props.stats.Home_Team_Shots}
             </Grid>
-            <Grid item xs={8} style={{ textAlign: 'center' }}>
+            <Grid
+              item
+              xs={8}
+              style={{ textAlign: 'center' }}
+              className="title-5"
+            >
               Shots
             </Grid>
             <Grid
@@ -83,7 +98,7 @@ export default function StatsTable(props) {
               style={{
                 fontWeight: '500',
                 color:
-                  props.stats.AwayTeam === 'Leverkusen' ? '#1976d2' : '#4A5268',
+                  props.stats.AwayTeam === 'Leverkusen' ? '#55a87b' : '#e01a4f',
                 textAlign: 'right',
               }}
             >
@@ -99,12 +114,17 @@ export default function StatsTable(props) {
               style={{
                 fontWeight: '500',
                 color:
-                  props.stats.HomeTeam === 'Leverkusen' ? '#1976d2' : '#4A5268',
+                  props.stats.HomeTeam === 'Leverkusen' ? '#55a87b' : '#e01a4f',
               }}
             >
               {props.stats.Home_Team_Shots_on_Target}
             </Grid>
-            <Grid item xs={8} style={{ textAlign: 'center' }}>
+            <Grid
+              item
+              xs={8}
+              style={{ textAlign: 'center' }}
+              className="title-5"
+            >
               Shots on Target
             </Grid>
             <Grid
@@ -113,7 +133,7 @@ export default function StatsTable(props) {
               style={{
                 fontWeight: '500',
                 color:
-                  props.stats.AwayTeam === 'Leverkusen' ? '#1976d2' : '#4A5268',
+                  props.stats.AwayTeam === 'Leverkusen' ? '#55a87b' : '#e01a4f',
                 textAlign: 'right',
               }}
             >
@@ -129,12 +149,17 @@ export default function StatsTable(props) {
               style={{
                 fontWeight: '500',
                 color:
-                  props.stats.HomeTeam === 'Leverkusen' ? '#1976d2' : '#4A5268',
+                  props.stats.HomeTeam === 'Leverkusen' ? '#55a87b' : '#e01a4f',
               }}
             >
               {props.stats.Home_Team_Corners}
             </Grid>
-            <Grid item xs={8} style={{ textAlign: 'center' }}>
+            <Grid
+              item
+              xs={8}
+              style={{ textAlign: 'center' }}
+              className="title-5"
+            >
               Corners
             </Grid>
             <Grid
@@ -143,7 +168,7 @@ export default function StatsTable(props) {
               style={{
                 fontWeight: '500',
                 color:
-                  props.stats.AwayTeam === 'Leverkusen' ? '#1976d2' : '#4A5268',
+                  props.stats.AwayTeam === 'Leverkusen' ? '#55a87b' : '#e01a4f',
                 textAlign: 'right',
               }}
             >
@@ -159,12 +184,17 @@ export default function StatsTable(props) {
               style={{
                 fontWeight: '500',
                 color:
-                  props.stats.HomeTeam === 'Leverkusen' ? '#1976d2' : '#4A5268',
+                  props.stats.HomeTeam === 'Leverkusen' ? '#55a87b' : '#e01a4f',
               }}
             >
               {props.stats.Home_Team_Fouls_Committed}
             </Grid>
-            <Grid item xs={8} style={{ textAlign: 'center' }}>
+            <Grid
+              item
+              xs={8}
+              style={{ textAlign: 'center' }}
+              className="title-5"
+            >
               Fouls Committed
             </Grid>
             <Grid
@@ -173,7 +203,7 @@ export default function StatsTable(props) {
               style={{
                 fontWeight: '500',
                 color:
-                  props.stats.AwayTeam === 'Leverkusen' ? '#1976d2' : '#4A5268',
+                  props.stats.AwayTeam === 'Leverkusen' ? '#55a87b' : '#e01a4f',
                 textAlign: 'right',
               }}
             >

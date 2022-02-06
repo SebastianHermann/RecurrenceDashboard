@@ -14,7 +14,6 @@ export const GetRPSInfo = (request) => async (dispatch) => {
       type: 'RPS_SUCCESS',
       payload: rps.data,
     });
-    console.log('RP INFO', rps);
   } catch (e) {
     dispatch({
       type: 'RPS_FAIL',

@@ -64,8 +64,7 @@ export default function CreateTGroupDialog(props) {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
+            Create a Tactical Group by selecting some players.
           </DialogContentText>
           <Grid container spacing={0}>
             <Grid item xs={12} style={{ padding: '12px 0px' }}>
@@ -93,7 +92,16 @@ export default function CreateTGroupDialog(props) {
                     label="Target Team"
                   />
                 )}
-                ChipProps={{ color: 'primary' }}
+                renderTags={(tagValue, getTagProps) =>
+                  tagValue.map((option, index) => (
+                    <Chip
+                      style={{ background: '#55A87B', color: 'white' }}
+                      label={option}
+                      {...getTagProps({ index })}
+                    />
+                  ))
+                }
+                // ChipProps={{ color: 'yellow' }}
               />
             </Grid>
             <Grid item xs={6} style={{ padding: '12px 0 12px 12px' }}>
@@ -105,7 +113,6 @@ export default function CreateTGroupDialog(props) {
                 getOptionLabel={(player) => player.toString()}
                 defaultValue={playerList2}
                 onChange={(event, value) => setPlayerList2(value)}
-                ChipProps={{ color: 'default' }}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -113,6 +120,15 @@ export default function CreateTGroupDialog(props) {
                     variant="outlined"
                   />
                 )}
+                renderTags={(tagValue, getTagProps) =>
+                  tagValue.map((option, index) => (
+                    <Chip
+                      style={{ background: '#E01A4F', color: 'white' }}
+                      label={option}
+                      {...getTagProps({ index })}
+                    />
+                  ))
+                }
               />
             </Grid>
           </Grid>

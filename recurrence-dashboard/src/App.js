@@ -1,33 +1,43 @@
+import { createTheme } from '@material-ui/core/styles';
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import ProjectsMain from './components/views/projects/ProjectsMain';
-import Main from './components/views/Main';
-import TGroupsMain from './components/views/tacticalGroups/TGroupsMain';
 import Home from './components/views/home/home';
-import { Grid } from '@mui/material';
-import football from './static/football.jpg';
+
+export const theme = createTheme({
+  primary: {
+    main: '#1F2041',
+    support: '#A7A8AB',
+    background: '#FBFDFF',
+    white: '#FFFFFF',
+  },
+  palette: {
+    primary: {
+      main: '#1F2041',
+      support: '#A7A8AB',
+      background: '#FBFDFF',
+      white: '#FFFFFF',
+    },
+    secondary: {
+      main: '#FFC857',
+      support: '#FBE1B5',
+    },
+    tertiary: {
+      main: '#1976D2',
+      support: '#E1EDF9',
+    },
+    target: {
+      main: '#E01A4F',
+      support: '#F9D1DC',
+    },
+    opponent: {
+      main: '#55A87B',
+      support: '#DDEEE4',
+    },
+  },
+});
 
 function App() {
-  return (
-    <Grid container style={{ height: '100vh' }}>
-      <Grid item xs={12} style={{ zIndex: 1 }}>
-        <Home />
-      </Grid>
-      <img
-        src={football}
-        style={{
-          zIndex: '0.5',
-          position: 'absolute',
-          objectFit: 'cover',
-          height: '100%',
-          width: '100%',
-          opacity: '70%',
-        }}
-        alt="football"
-      />
-    </Grid>
-  );
+  return <Home />;
 }
 
 export default App;

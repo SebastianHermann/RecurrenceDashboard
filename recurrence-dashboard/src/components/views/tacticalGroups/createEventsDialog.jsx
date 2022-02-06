@@ -11,6 +11,7 @@ import Chip from '@mui/material/Chip';
 import { useDispatch } from 'react-redux';
 import * as TGroups from '../../../actions/TGroupActions';
 import { useParams } from 'react-router-dom';
+import * as Events from '../../../actions/EventActions';
 
 export default function CreateEventDialog(props) {
   const dispatch = useDispatch();
@@ -40,10 +41,16 @@ export default function CreateEventDialog(props) {
       involvedTeams: matchEvent.involvedTeams,
     };
 
-    console.log('Event Request', request);
-    // dispatch(TGroups.CreateTGroup(request));
-    // dispatch(MEvents.CreateEvent(request))
+    dispatch(Events.CreateEvent(request));
     props.handleClose();
+  };
+
+  const secondsConverter = (sec) => {
+    let minutes = Math.floor(sec / 60); // get minutes
+    let seconds = sec - minutes * 60;
+    let m_result = minutes < 10 ? '0' + minutes : minutes;
+    let s_result = seconds < 10 ? '0' + seconds : seconds;
+    return String(m_result + ':' + s_result);
   };
 
   return (
@@ -83,6 +90,7 @@ export default function CreateEventDialog(props) {
                 variant="outlined"
                 type={'number'}
                 value={matchEvent.second}
+                helperText={'Time: ' + secondsConverter(matchEvent.second)}
                 onChange={(event) =>
                   setMatchEvent({ ...matchEvent, second: event.target.value })
                 }

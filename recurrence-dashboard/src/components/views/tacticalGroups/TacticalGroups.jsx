@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import SpeedIcon from '@mui/icons-material/Speed';
-import { Typography } from '@mui/material';
+import { ListItem, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -13,20 +13,26 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
+import ListSubheader from '@mui/material/ListSubheader';
 import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Collapse from '@mui/material/Collapse';
 import Slider from '@mui/material/Slider';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import * as TGroups from '../../../actions/TGroupActions';
-import * as Tracking from '../../../actions/TrackingActions';
 import CreateTGroupDialog from './createTGroupDialog';
 import PitchLive from './pitch_all';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import StatsTable from '../../common/StatsTable';
 import CreateEventDialog from './createEventsDialog';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import EventList from '../../common/EventList';
+import AccessTime from '@mui/icons-material/AccessTime';
+import EventTimeLine from '../../common/EventTimeLine';
 
 const Loader = () => {
   return (
@@ -41,9 +47,8 @@ const Loader = () => {
 const TGroupList = (props) => {
   const style = {
     list_element: {
-      // background: 'white',
       overflowY: 'auto',
-      // height: '76.4vh',
+      height: '83vh',
     },
   };
 
@@ -57,36 +62,21 @@ const TGroupList = (props) => {
 
   return (
     <Grid container item xs={12} style={style.list_element}>
-      <Grid item xs={12}>
-        <Divider />
+      <Grid item xs={12} style={{ padding: '0 24px' }}>
         <List style={{ padding: 0 }}>
           {!props.loading ? (
             <>
               {props.tGroups.map((item) => (
-                <>
+                <div key={item._id.$oid}>
                   <ListItemButton
-                    // selected={selectedIndex === 0}
                     onClick={(event) => handleListItemClick(event, item)}
-                    style={{ padding: '12px 12px 12px 6px' }}
+                    style={{ padding: '0' }}
                   >
-                    <Grid container>
+                    <Grid container style={{ padding: '12px 0' }}>
                       <Grid item xs={6}>
-                        {/* <ListItemText
-                          style={{ fontSize: '14px' }}
-                          primary={item.title}
-                          secondary={
-                            item.player_list_1.length +
-                            item.player_list_2.length +
-                            ' Players'
-                          }
-                        /> */}
                         <Typography
-                          variant="body2"
-                          component="div"
-                          // color="text.secondary"
+                          className="title-5"
                           style={{
-                            fontSize: '14px',
-                            fontWeight: '500',
                             color:
                               item._id.$oid === selectedGroup
                                 ? '#1976d2'
@@ -109,25 +99,29 @@ const TGroupList = (props) => {
                       <Grid container item xs={6} justifyContent="flex-end">
                         {item.player_list_1.map((player) => (
                           <Chip
+                            className="target-chip-primary"
                             style={{
-                              margin: '0 5px 5px 0',
-                              background: '#1976d2',
-                              color: 'white',
-                              fontSize: '10px',
+                              margin: '0 8px 8px 0',
+
+                              fontSize: '14px',
+                              minWidth: '32px',
                             }}
+                            key={player}
                             size="small"
                             label={player}
                           />
                         ))}
                         {item.player_list_2.map((player) => (
                           <Chip
+                            className="opponent-chip-primary"
                             style={{
-                              margin: '0 5px 5px 0',
-                              background: '#4b6584',
-                              fontSize: '10px',
-                              color: 'white',
+                              margin: '0 8px 8px 0',
+
+                              fontSize: '14px',
+                              minWidth: '32px',
                             }}
                             size="small"
+                            key={player}
                             label={player}
                           />
                         ))}
@@ -135,7 +129,7 @@ const TGroupList = (props) => {
                     </Grid>
                   </ListItemButton>
                   <Divider />
-                </>
+                </div>
               ))}
             </>
           ) : (
@@ -148,51 +142,63 @@ const TGroupList = (props) => {
 };
 
 const Player = (props) => {
-  const style = {
-    playerContainer: { background: 'white' },
-  };
-
   const handleSlide = (event, value) => {
     props.handleSlide(event, value);
   };
 
+  const secondsConverter = (sec) => {
+    let minutes = Math.floor(sec / 60); // get minutes
+    let seconds = sec - minutes * 60;
+    let m_result = minutes < 10 ? '0' + minutes : minutes;
+    let s_result = seconds < 10 ? '0' + seconds : seconds;
+    return String(m_result + ':' + s_result);
+  };
+
   return (
     <Grid container item xs={12} spacing={0}>
-      <Grid item xs={12} style={{ padding: '0px 0px 12px 0px' }}>
-        <Divider />
-      </Grid>
-
-      <Grid item xs={2} style={{ padding: '0px 0px 20px 30px' }}>
-        <Button
-          variant="contained"
-          size="small"
-          onClick={props.handlePlayPause}
-          startIcon={
-            props.play ? <PauseRoundedIcon /> : <PlayArrowRoundedIcon />
-          }
-        >
-          {props.play ? 'Pause' : 'Play'}
-        </Button>
-      </Grid>
-      <Grid item xs={8} style={{ padding: '0px 24px' }}>
+      <Grid item xs={12} style={{ padding: '0px 32px' }}>
         <Slider
           size="small"
-          defaultValue={70}
+          defaultValue={1}
           aria-label="Small"
           valueLabelDisplay="auto"
-          max={props.maxSeconds}
+          max={props.maxSeconds ? props.maxSeconds : 5400}
           onChange={handleSlide}
           value={props.sliderValue}
           // onChangeCommitted={handleComittedDrag}
+          disabled={props.maxSeconds ? false : true}
         />
       </Grid>
 
-      <Grid item xs={2} style={{ padding: '0px 12px' }}>
+      <Grid item style={{ textAlign: 'left', alignSelf: 'center' }}>
+        <Typography
+          style={{
+            padding: '0px 16px 16px 16px',
+            color: '#1976d2',
+            fonSize: '16px',
+          }}
+        >
+          <IconButton onClick={props.handlePlayPause} color="primary">
+            {props.play ? <PauseRoundedIcon /> : <PlayArrowRoundedIcon />}
+          </IconButton>
+          <div
+            style={{
+              verticalAlign: 'middle',
+              display: 'inline-flex',
+              fontWeight: '500',
+            }}
+          >
+            <span>{secondsConverter(props.gameSecond)}</span>
+          </div>
+        </Typography>
+      </Grid>
+
+      <Grid item style={{ padding: '0px 12px', alignSelf: 'baseline' }}>
         <Button
-          variant="outlined"
           size="small"
           onClick={props.handleSpeed}
           startIcon={<SpeedIcon />}
+          style={{ padding: '8px' }}
         >
           {props.speed === 500 ? '2x' : props.speed === 1000 ? '1x' : '0.5x'}{' '}
         </Button>
@@ -310,11 +316,6 @@ export default function TacticalGroups() {
     setSliderValue(value);
   };
 
-  const handleSecondChange = () => {
-    let newSecond = gameSecond + 1;
-    setGameSecond(newSecond);
-  };
-
   const handleGroupChange = (filtered_1, filtered_2, tGroupName) => {
     setFiltered1(filtered_1);
     setFiltered2(filtered_2);
@@ -348,104 +349,57 @@ export default function TacticalGroups() {
     setOpenToGroupDialog(false);
   };
 
+  const handleEventSecond = (sec) => {
+    setPlay(false);
+    setGameSecond(sec);
+  };
+
   return (
     <React.Fragment>
-      {/* <CssBaseline /> */}
-      {/* <Navbar />
-      <Container maxWidth="xl">
-        <Box sx={{ bgcolor: '#f8f8f8', height: '93vh' }}> */}
-      {/* <Box sx={{ width: '100%', borderRadius: '5px' }}>
-        <Grid
-          container
-          spacing={0}
-          alignItems="center"
-          style={{ padding: '24px' }}
-        >
-          <Grid
-            item
-            xs={7}
-            style={{ textAlign: 'right', alignSelf: 'flex-end' }}
-          >
-            <Button
-              size="small"
-              variant="contained"
-              onClick={() => setTGroup('all')}
-              disabled={tGroup === 'all'}
-            >
-              Show All
-            </Button>
-          </Grid>
-        </Grid>
-      </Box> */}
-      {/* <Backdrop
-          sx={{
-            color: '#fff',
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-          }}
-          open={true}
-          // onClick={handleClose}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop> */}
       <Grid
         container
-        style={{ padding: '12px 0px 0px 0px ', alignItems: 'flex-start' }}
+        item
+        xs={3}
+        style={{
+          height: '100vh',
+          background: 'white',
+          border: 'solid 1px #eee',
+        }}
+        alignContent="start"
       >
-        <Grid item xs={3} container style={{ padding: '0px 12px 0px 0px' }}>
-          <Grid
-            item
-            xs={6}
-            // md={2}
-            style={{
-              textAlign: 'left',
-              alignSelf: 'flex-end',
-              paddingBottom: '12px',
-            }}
-          >
-            <Typography
-              variant="h6"
-              // gutterBottom
-              component="div"
-              color="text.secondary"
-              // fontWeight={500}
-            >
-              Tactical Group
-              {/* Datum des Spiels */}
-            </Typography>
-            <Typography
-              variant="body2"
-              // gutterBottom
-              component="div"
-              color="text.secondary"
-              // fontWeight={500}
-            >
-              {tGroups.length == 1
-                ? '1 Tactical Group'
-                : tGroups.length + ' Tactical Groups'}
+        <Grid container item xs={12} style={{ padding: '24px 24px 0 24px' }}>
+          <Grid item xs={8}>
+            <Typography className="subtitle-2">Project Title</Typography>
+            <Typography className="title-3" gutterBottom>
+              Tactical Groups
             </Typography>
           </Grid>
           <Grid
             item
-            xs={6}
-            // md={2}
-            style={{
-              textAlign: 'right',
-              alignSelf: 'center',
-              paddingBottom: '12px',
-            }}
+            xs={4}
+            alignSelf="end"
+            justifySelf={'flex-end'}
+            textAlign={'right'}
+            style={{ marginBottom: '16px' }}
           >
-            {/* <IconButton color="primary">
-              <AddIcon onClick={() => setOpenNewDialog(true)} />
-            </IconButton> */}
             <Button
-              // variant="outlined"
+              variant="contained"
               startIcon={<AddIcon />}
               onClick={() => setOpenNewDialog(true)}
-              size="small"
-              style={{ minWidth: '100px' }}
+              className="add-button-small"
             >
-              New
+              <span>New</span>
             </Button>
+            {/* <IconButton
+              color="primary"
+              onClick={() => setOpenNewDialog(true)}
+              size="large"
+              
+              // style={{ paddingBottom: '24px' }}
+            >
+              <AddIcon />
+              New
+            </IconButton> */}
             {openNewDialog ? (
               <CreateTGroupDialog
                 open={true}
@@ -464,289 +418,305 @@ export default function TacticalGroups() {
               <></>
             )}
           </Grid>
-
-          <TGroupList
-            handleGroupChange={handleGroupChange}
-            tGroups={tGroups}
-            loading={loading}
-          />
         </Grid>
 
-        <Grid
-          container
-          spacing={0}
-          item
-          xs={6}
-          alignItems="baseline"
-          style={{
-            alignContent: 'start',
-            padding: '0px 12px',
-            alignItems: 'flex-start',
-          }}
-        >
-          {project && gameData.length ? (
-            <>
-              <Grid
-                container
-                style={{
-                  background: 'white',
-                  borderRadius: '6px',
-                }}
-              >
-                <Grid
-                  item
-                  xs={12}
-                  container
-                  style={{ padding: '12px 30px 12px 30px' }}
-                >
-                  <Grid item xs={4}>
-                    <Typography
-                      variant="h6"
-                      // gutterBottom
-                      component="div"
-                      color="text.secondary"
-                      // fontWeight={500}
-                    >
-                      Tactical Play
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={4}
-                    style={{ textAlign: 'center', alignSelf: 'center' }}
-                  >
-                    <Typography
-                      variant="body2"
-                      compnent="div"
-                      color="text.secondary"
-                    >
-                      <AccessTimeIcon
-                        style={{
-                          color: 'darkgray',
-                          fontSize: '18px',
-                          verticalAlign: 'middle',
-                          marginRight: '12px',
-                        }}
-                      />
-                      {gameSecond}
-                      {' s'}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} style={{ textAlign: 'right' }}>
-                    <Button
-                      size="small"
-                      startIcon={<RestartAltIcon />}
-                      onClick={() => setTGroup('all')}
-                      disabled={tGroup === 'all'}
-                    >
-                      Reset
-                    </Button>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12} style={{ padding: '7px 0px' }}>
-                  <Divider />
-                </Grid>
-
-                <PitchLive
-                  gameData={gameData[gameSecond]}
-                  handleDotClick={handleDotClick}
-                />
-                <Player
-                  play={play}
-                  speed={speed}
-                  handlePlayPause={handlePlayPause}
-                  handleSpeed={handleSpeed}
-                  maxSeconds={trackingData.length - 1}
-                  handleSlide={handleSlide}
-                  sliderValue={sliderValue}
-                />
-              </Grid>
-              <Grid container item xs={12} style={{ paddingTop: '18px' }}>
-                <Grid item xs={6} style={{ marginBottom: '6px' }}>
-                  Target Team
-                </Grid>
-                <Grid item xs={6} style={{ marginBottom: '6px' }}>
-                  Opponent Team
-                </Grid>
-                <Grid item xs={6} style={{ minHeight: '25px' }}>
-                  {playerList1.map((player) => (
-                    <Chip
-                      style={{
-                        marginRight: '1%',
-                        background: '#1976d2',
-                        color: 'white',
-                      }}
-                      size="small"
-                      label={player}
-                      onClick={() =>
-                        setPlayerList1(playerList1.filter((p) => p !== player))
-                      }
-                    />
-                  ))}
-                  {playerList1.length ? (
-                    <IconButton
-                      aria-label="delete"
-                      size="small"
-                      disabled={playerList1.length === 0}
-                      onClick={() => {
-                        setPlayerList1([]);
-                      }}
-                    >
-                      <CloseIcon fontSize="small" />
-                    </IconButton>
-                  ) : (
-                    <></>
-                  )}
-                </Grid>
-                <Grid item xs={6} style={{ minHeight: '30px' }}>
-                  {playerList2.map((player) => (
-                    <Chip
-                      style={{
-                        marginRight: '1%',
-                        background: '#4B6584',
-                        color: 'white',
-                      }}
-                      size="small"
-                      label={player}
-                      onClick={() =>
-                        setPlayerList2(playerList2.filter((p) => p !== player))
-                      }
-                    />
-                  ))}
-                  {playerList2.length ? (
-                    <IconButton
-                      aria-label="delete"
-                      size="small"
-                      disabled={playerList2.length === 0}
-                      onClick={() => {
-                        setPlayerList2([]);
-                      }}
-                    >
-                      <CloseIcon fontSize="small" />
-                    </IconButton>
-                  ) : (
-                    <></>
-                  )}
-                </Grid>
-                <Grid item xs={12} style={{ margin: '12px 0px' }}>
-                  <Divider />
-                </Grid>
-                <Grid
-                  item
-                  xs={6}
-                  style={{ textAlign: 'left', color: 'darkgrey' }}
-                >
-                  {playerList1.length === 0 && playerList2.length === 0
-                    ? 'Select some players by clicking on them'
-                    : ''}
-                </Grid>
-                <Grid item xs={6} style={{ textAlign: 'right' }}>
-                  <Button
-                    variant="contained"
-                    startIcon={<ArrowRightAltIcon />}
-                    size="small"
-                    disabled={
-                      playerList1.length === 0 && playerList2.length === 0
-                    }
-                    onClick={() => setOpenToGroupDialog(true)}
-                  >
-                    To New Group
-                  </Button>
-                  {openToGroupDialog ? (
-                    <CreateTGroupDialog
-                      open={true}
-                      handleClose={handleCloseToGroupDialog}
-                      game={project.game_id}
-                      playerList1={playerList1}
-                      playerList2={playerList2}
-                      allPlayers1={gameData[gameSecond].player_list_1.map(
-                        (item) => item.mapped_id
-                      )}
-                      allPlayers2={gameData[gameSecond].player_list_2.map(
-                        (item) => item.mapped_id
-                      )}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </Grid>
-              </Grid>
-            </>
-          ) : (
-            <Loader />
-          )}
-        </Grid>
-        <Grid item xs={3} container style={{ padding: '0px 12px' }}>
-          <Grid
-            item
-            xs={12}
-            // md={2}
-          >
-            <div
-              style={{
-                textAlign: 'left',
-                alignSelf: 'flex-end',
-
-                background: 'white',
-                borderRadius: '6px',
-              }}
-            >
-              <StatsTable stats={stats} />
-            </div>
-          </Grid>
-          {/* NEWWWWW */}
-          <Grid container item xs={12} style={{ padding: '24px 6px' }}>
-            <Grid
-              item
-              xs={6}
-              // md={2}
-              style={{
-                textAlign: 'left',
-                alignSelf: 'flex-end',
-                paddingBottom: '12px',
-              }}
-            >
-              <Typography
-                variant="h6"
-                // gutterBottom
-                component="div"
-                color="text.secondary"
-                // fontWeight={500}
-              >
-                Match Events
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={6}
-              // md={2}
-              style={{
-                textAlign: 'right',
-                alignSelf: 'center',
-                paddingBottom: '12px',
-              }}
-            >
-              <IconButton color="primary">
-                <AddIcon onClick={() => setOpenEventDialog(true)} />
-              </IconButton>
-              {openEventDialog ? (
-                <CreateEventDialog
-                  open={true}
-                  handleClose={() => setOpenEventDialog(false)}
-                  game={project.game_id}
-                  gameSecond={gameSecond}
-                />
-              ) : (
-                <></>
-              )}
-            </Grid>
-
+        {/* <Grid item xs={12}>
+          <Divider />
+        </Grid> */}
+        <Grid container item xs={12}>
+          <Grid item xs={12}>
             <TGroupList
               handleGroupChange={handleGroupChange}
               tGroups={tGroups}
               loading={loading}
             />
           </Grid>
+        </Grid>
+      </Grid>
+
+      <Grid
+        container
+        item
+        xs={5}
+        alignItems="baseline"
+        style={{
+          alignContent: 'start',
+          padding: '24px',
+          alignItems: 'flex-start',
+        }}
+      >
+        <Grid container item xs={12} style={{ marginBottom: '24px' }}>
+          <Grid item xs={8}>
+            <Typography className="subtitle-2">Game 02</Typography>
+            <Typography className="title-4" style={{ fontWeight: 'bold' }}>
+              Match Player
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            xs={4}
+            style={{ textAlign: 'right', alignSelf: 'flex-end' }}
+          >
+            <Button
+              size="small"
+              startIcon={<RestartAltIcon />}
+              onClick={() => setTGroup('all')}
+              disabled={tGroup === 'all'}
+            >
+              Reset
+            </Button>
+          </Grid>
+        </Grid>
+        <>
+          <Grid
+            container
+            style={{
+              background: 'white',
+              borderRadius: '8px',
+              border: 'solid 1px #eee',
+            }}
+          >
+            <PitchLive
+              gameData={gameData[gameSecond]}
+              handleDotClick={handleDotClick}
+              gameSecond={gameSecond}
+              loading={project && gameData.length ? false : true}
+              viewMode="game"
+            />
+            {/* {project && gameData.length ? (
+              <> */}
+            <Player
+              play={play}
+              speed={speed}
+              handlePlayPause={handlePlayPause}
+              handleSpeed={handleSpeed}
+              maxSeconds={trackingData.length - 1}
+              handleSlide={handleSlide}
+              sliderValue={sliderValue}
+              gameSecond={gameSecond}
+            />
+            {/* </>
+            ) : (
+              <Loader />
+            )} */}
+          </Grid>
+          <Grid container item xs={12} style={{ paddingTop: '18px' }}>
+            <Grid item xs={6} style={{ marginBottom: '6px' }}>
+              <Typography className="title-5">Target Team</Typography>
+            </Grid>
+            <Grid item xs={6} style={{ marginBottom: '6px' }}>
+              <Typography className="title-5">Opponent Team</Typography>
+            </Grid>
+            <Grid item xs={6} style={{ minHeight: '25px' }}>
+              {playerList1.map((player) => (
+                <Chip
+                  style={{
+                    marginRight: '8px',
+                    background: '#55a87b',
+                    color: 'white',
+                    minWidth: '32px',
+                  }}
+                  size="small"
+                  label={player}
+                  onClick={() =>
+                    setPlayerList1(playerList1.filter((p) => p !== player))
+                  }
+                />
+              ))}
+              {playerList1.length ? (
+                <IconButton
+                  aria-label="delete"
+                  size="small"
+                  disabled={playerList1.length === 0}
+                  onClick={() => {
+                    setPlayerList1([]);
+                  }}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              ) : (
+                <></>
+              )}
+            </Grid>
+            <Grid item xs={6} style={{ minHeight: '25px' }}>
+              {playerList2.map((player) => (
+                <Chip
+                  style={{
+                    marginRight: '8px',
+                    background: '#e01a4f',
+                    color: 'white',
+                    minWidth: '32px',
+                  }}
+                  size="small"
+                  label={player}
+                  onClick={() =>
+                    setPlayerList2(playerList2.filter((p) => p !== player))
+                  }
+                />
+              ))}
+              {playerList2.length ? (
+                <IconButton
+                  aria-label="delete"
+                  size="small"
+                  disabled={playerList2.length === 0}
+                  onClick={() => {
+                    setPlayerList2([]);
+                  }}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              ) : (
+                <></>
+              )}
+            </Grid>
+            <Grid item xs={12} style={{ margin: '12px 0px' }}>
+              <Divider />
+            </Grid>
+            <Grid item xs={6} style={{ textAlign: 'left', color: 'darkgrey' }}>
+              {playerList1.length === 0 && playerList2.length === 0
+                ? 'Select some players by clicking on them'
+                : ''}
+            </Grid>
+            <Grid item xs={6} style={{ textAlign: 'right' }}>
+              <Button
+                variant="contained"
+                startIcon={<ArrowRightAltIcon />}
+                size="small"
+                className="add-button-small"
+                style={{
+                  opacity:
+                    playerList1.length === 0 && playerList2.length === 0
+                      ? '20%'
+                      : '100%',
+                }}
+                disabled={playerList1.length === 0 && playerList2.length === 0}
+                onClick={() => setOpenToGroupDialog(true)}
+              >
+                To New Group
+              </Button>
+              {/* <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => setOpenNewDialog(true)}
+              className="add-button-small"
+            >
+              <span>New</span>
+            </Button> */}
+              {openToGroupDialog ? (
+                <CreateTGroupDialog
+                  open={true}
+                  handleClose={handleCloseToGroupDialog}
+                  game={project.game_id}
+                  playerList1={playerList1}
+                  playerList2={playerList2}
+                  allPlayers1={gameData[gameSecond].player_list_1.map(
+                    (item) => item.mapped_id
+                  )}
+                  allPlayers2={gameData[gameSecond].player_list_2.map(
+                    (item) => item.mapped_id
+                  )}
+                />
+              ) : (
+                <></>
+              )}
+            </Grid>
+          </Grid>
+        </>
+      </Grid>
+      <Grid item xs={3} container style={{ padding: '24px 24px 24px 0px' }}>
+        <Grid item xs={12} style={{ marginBottom: '18px' }}>
+          <Typography className="subtitle-2">Game 02</Typography>
+          <Typography className="title-4" style={{ fontWeight: 'bold' }}>
+            Match Overview
+          </Typography>
+        </Grid>
+
+        <Grid
+          item
+          xs={12}
+          // md={2}
+        >
+          <div
+            style={{
+              textAlign: 'left',
+              alignSelf: 'flex-end',
+
+              background: 'white',
+              borderRadius: '6px',
+            }}
+          >
+            <StatsTable stats={stats} />
+          </div>
+        </Grid>
+
+        <Grid
+          container
+          item
+          xs={12}
+          style={{
+            height: '61vh',
+            alignContent: 'flex-start',
+            overflowY: 'auto',
+            paddingTop: '16px',
+          }}
+        >
+          <Grid
+            item
+            xs={4}
+            // md={2}
+            style={{
+              textAlign: 'left',
+              alignSelf: 'flex-end',
+              paddingBottom: '24px',
+            }}
+          >
+            <Typography
+              variant="h6"
+              // gutterBottom
+              component="div"
+              className="title-5"
+              style={{ paddingBottom: '4px' }}
+            >
+              Match Events
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={8}
+            // md={2}
+            style={{
+              textAlign: 'left',
+              alignSelf: 'center',
+              paddingBottom: '24px',
+            }}
+          >
+            <IconButton
+              color="primary"
+              onClick={() => setOpenEventDialog(true)}
+              // style={{ paddingBottom: '24px' }}
+            >
+              <AddIcon />
+            </IconButton>
+            {openEventDialog ? (
+              <CreateEventDialog
+                open={true}
+                handleClose={() => setOpenEventDialog(false)}
+                game={project.game_id}
+                gameSecond={gameSecond}
+              />
+            ) : (
+              <></>
+            )}
+          </Grid>
+
+          {/* <<TGroupList
+              handleGroupChange={handleGroupChange}
+              tGroups={tGroups}
+              loading={loading}
+            />> */}
+          {/* <EventList handleEventSecond={handleEventSecond} /> */}
+          <EventTimeLine handleEventSecond={handleEventSecond} />
         </Grid>
       </Grid>
     </React.Fragment>
