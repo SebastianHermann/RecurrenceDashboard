@@ -1,5 +1,4 @@
 const DefaultState = {
-  rqasLoading: false,
   rqa_id: '',
   selectedRPLoading: false,
   selectedRP: {},
@@ -19,6 +18,12 @@ const DefaultState = {
   mirror_cord: true,
   downsample: '',
 
+  meta_rp_id: '',
+  meta_min_rec_points: '',
+  meta_white_space_width: '',
+  meta_rp_data: [],
+  meta_rp_data_loading: false,
+
   rr: '',
   rrLoading: false,
   det: '',
@@ -33,12 +38,14 @@ const DefaultState = {
   entrLoading: false,
   entrV: '',
   entrVLoading: false,
-  met1: '',
-  met1Loading: false,
-  met2: '',
-  met2Loading: false,
-  met3: '',
-  met3Loading: false,
+  frp1: '',
+  frp1Loading: false,
+  frp2: '',
+  frp2Loading: false,
+  frp3: '',
+  frp3Loading: false,
+  rqaMetaLoading: false,
+
   errorMsg: '',
 };
 
@@ -47,7 +54,6 @@ const RQAReducer = (state = DefaultState, action) => {
     case 'RQA_LOADING':
       return {
         ...state,
-        rqasLoading: true,
         rrLoading: true,
         detLoading: true,
         lamLoading: true,
@@ -55,14 +61,14 @@ const RQAReducer = (state = DefaultState, action) => {
         ttLoading: true,
         entrLoading: true,
         entrVLoading: true,
-        met1Loading: true,
-        met2Loading: true,
-        met3Loading: true,
+        frp1Loading: true,
+        frp2Loading: true,
+        frp3Loading: true,
         errorMsg: '',
       };
     case 'RP_LOADING':
       return {
-        ...state,
+        ...DefaultState,
         selectedRPLoading: true,
         errorMsg: '',
       };
@@ -128,25 +134,25 @@ const RQAReducer = (state = DefaultState, action) => {
         entrV: action.payload,
         errorMsg: '',
       };
-    case 'MET1_SUCCESS':
+    case 'FRP1_SUCCESS':
       return {
         ...state,
-        met1Loading: false,
-        met1: action.payload,
+        frp1Loading: false,
+        frp1: action.payload,
         errorMsg: '',
       };
-    case 'MET2_SUCCESS':
+    case 'FRP2_SUCCESS':
       return {
         ...state,
-        met2Loading: false,
-        met2: action.payload,
+        frp2Loading: false,
+        frp2: action.payload,
         errorMsg: '',
       };
-    case 'MET3_SUCCESS':
+    case 'FRP3_SUCCESS':
       return {
         ...state,
-        met3Loading: false,
-        met3: action.payload,
+        frp3Loading: false,
+        frp3: action.payload,
         errorMsg: '',
       };
 
@@ -166,7 +172,6 @@ const RQAReducer = (state = DefaultState, action) => {
     case 'RQA_SUCCESS':
       return {
         ...state,
-        rqasLoading: false,
         rrLoading: false,
         detLoading: false,
         lamLoading: false,
@@ -174,9 +179,23 @@ const RQAReducer = (state = DefaultState, action) => {
         ttLoading: false,
         entrLoading: false,
         entrVLoading: false,
-        met1Loading: false,
-        met2Loading: false,
-        met3Loading: false,
+        frp1Loading: false,
+        frp2Loading: false,
+        frp3Loading: false,
+        errorMsg: '',
+      };
+
+    case 'RQ_META_LOADING':
+      return {
+        ...state,
+        rqaMetaLoading: true,
+        errorMsg: '',
+      };
+    case 'RQ_META_SUCCESS':
+      return {
+        ...state,
+        ...action.payload,
+        rqaMetaLoading: false,
         errorMsg: '',
       };
 

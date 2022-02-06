@@ -9,6 +9,7 @@ import * as RPS from '../../actions/RPActions';
 import * as Stats from '../../actions/StatsActions';
 import * as TGroups from '../../actions/TGroupActions';
 import * as Tracking from '../../actions/TrackingActions';
+import ReduceCapacityIcon from '@mui/icons-material/ReduceCapacity';
 
 const SideNav = (props) => {
   const dispatch = useDispatch();
@@ -69,15 +70,15 @@ const SideNav = (props) => {
         <Grid item xs={12}>
           <Typography
             className={
-              selectedTab === 'recurrencecomparison'
+              selectedTab === 'recurrencereport'
                 ? 'sidenav-container-item-active'
                 : 'sidenav-container-item'
             }
             onClick={(event) =>
-              handleNavElementClick(event, 'recurrencecomparison')
+              handleNavElementClick(event, 'recurrencereport')
             }
           >
-            Recurrence Comparison
+            Recurrence Report
           </Typography>
         </Grid>
       </Grid>

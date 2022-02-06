@@ -13,6 +13,8 @@ import Report2PDF from './components/views/pdf/Report2PDF';
 import Home from './components/views/home/home';
 import TacticalGroups from './components/views/tacticalGroups/TacticalGroups';
 import RecurrenceAnalysis from './components/views/recboard/RecurrenceAnalysis';
+import TestPDF from './components/views/pdf/TestPDF';
+import RecurrenceReport from './components/views/reports/RecurrenceReport';
 
 const rootElement = document.getElementById('root');
 
@@ -28,10 +30,9 @@ render(
             path="recurrenceanalysis"
             element={<RecurrenceAnalysis />}
           ></Route>
-          <Route path="export" element={<Report2PDF />}></Route>
+          <Route path="recurrencereport" element={<RecurrenceReport />}></Route>
         </Route>
-
-        {/* <Route path="projects/:project_id/pdf" element={<Report2PDF />} /> */}
+        <Route path="projects/:project_id/export" element={<TestPDF />}></Route>
       </Routes>
     </Provider>
   </BrowserRouter>,

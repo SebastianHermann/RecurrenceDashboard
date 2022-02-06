@@ -67,10 +67,9 @@ const TGroupList = (props) => {
           {!props.loading ? (
             <>
               {props.tGroups.map((item) => (
-                <>
+                <div key={item._id.$oid}>
                   <ListItemButton
                     onClick={(event) => handleListItemClick(event, item)}
-                    key={item._id.$oid}
                     style={{ padding: '0' }}
                   >
                     <Grid container style={{ padding: '12px 0' }}>
@@ -130,7 +129,7 @@ const TGroupList = (props) => {
                     </Grid>
                   </ListItemButton>
                   <Divider />
-                </>
+                </div>
               ))}
             </>
           ) : (
@@ -483,6 +482,7 @@ export default function TacticalGroups() {
               handleDotClick={handleDotClick}
               gameSecond={gameSecond}
               loading={project && gameData.length ? false : true}
+              viewMode="game"
             />
             {/* {project && gameData.length ? (
               <> */}

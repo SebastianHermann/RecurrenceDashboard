@@ -63,6 +63,24 @@ code {
   font-weight: 500 !important;
 }
 
+.highlight-5-yellow {
+  color: #df9d31 !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
+
+.highlight-5-green {
+  color: #55a87b !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
+
+.highlight-5-red {
+  color: #b4e0c8 !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
+
 .subtitle-1 {
   color: #a7a8ab !important;
   font-size: 24px !important;
@@ -88,6 +106,7 @@ code {
 
 .secondary-button {
   background-color: #ffc857 !important;
+  /* background-color: #df9d31 !important; */
   color: #1f2041 !important;
 }
 
@@ -110,6 +129,7 @@ code {
 
 .add-button-small {
   background-color: #ffc857 !important;
+  /* background-color: #df9d31 !important; */
   color: #1f2041 !important;
   font-size: 24px;
   min-width: 44px !important;
@@ -153,7 +173,8 @@ code {
   text-align: center !important;
   color: #1f2041de !important;
   font-weight: 500 !important;
-  padding: 24px;
+  padding: 16px 32px !important;
+  font-size: 14px !important;
 }
 
 .sidenav-container-item:hover {
@@ -168,7 +189,8 @@ code {
   border-right: solid 3px #1976d2;
   text-align: center !important;
   font-weight: 500 !important;
-  padding: 24px !important;
+  padding: 16px 32px !important;
+  font-size: 14px !important;
 }
 
 .target-chip-primary {
@@ -189,6 +211,7 @@ code {
 .opponent-chip-secondary {
   background: #ff7477;
   color: #1f2041;
+  /* color: #3d3f68; */
 }
 
 .tracking-player-label {
@@ -202,4 +225,22 @@ code {
 
 .user-select-none {
   margin: auto !important;
+}
+
+.active {
+  color: #1976d2 !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+
+.css-j204z7-MuiFormControlLabel-root .MuiFormControlLabel-label .inactive {
+  color: #777779 !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+
+.css-j204z7-MuiFormControlLabel-root .MuiFormControlLabel-label {
+  color: #777779 !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
 }

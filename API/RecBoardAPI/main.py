@@ -165,12 +165,14 @@ def recurrence_plots(project_id):
     return Response(result, mimetype='application/json')
 
 
-@app.route('/rps/<project_id>/meta', methods=["GET", "POST", "PUT", "DELETE"])
-def recurrence_plots_meta(project_id):
+@app.route('/rp/<rp_id>/meta', methods=["GET", "POST", "PUT", "DELETE"])
+def recurrence_plots_meta(rp_id):
 
     if request.method == 'POST':
         request_data = request.get_json()
-        result = RPS.create_meta_rp(df, request_data)
+        result = RPS.create_meta_rp(df, request_data, rp_id)
+    if request.method == 'GET':
+        result = RPS.get_meta_rp(rp_id, df)
 
     return Response(result, mimetype='application/json')
 

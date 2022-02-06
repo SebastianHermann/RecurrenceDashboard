@@ -66,10 +66,10 @@ export default function PitchLive(props) {
   const labelBar = () => {
     let label = props.gameDataY ? (
       <>
-        <span>{dot('#55A87B')}Target Team x</span>
-        <span>{dot('#B4E0C8')}Target Team y</span>
-        <span>{dot('#E01A4F')}Opponent Team x</span>
-        <span>{dot('#FF7477')}Opponent Team y</span>
+        <span>{dot('#55A87B')}Target Team (x)</span>
+        <span>{dot('#B4E0C8')}Target Team (y)</span>
+        <span>{dot('#E01A4F')}Opponent Team (x)</span>
+        <span>{dot('#FF7477')}Opponent Team (y)</span>
       </>
     ) : (
       <>
@@ -77,6 +77,16 @@ export default function PitchLive(props) {
           <span>{dot('#55A87B')}Target Team</span>
           <span>{dot('#E01A4F')}Opponent Team</span>
         </>
+      </>
+    );
+    return label;
+  };
+
+  const labelBarRP = () => {
+    let label = (
+      <>
+        <span>{dot('#1976d2')}RP x-axis</span>
+        <span>{dot('#ffc857')}RP y-axis</span>
       </>
     );
     return label;
@@ -98,7 +108,7 @@ export default function PitchLive(props) {
             fontSize: '16px',
           }}
         >
-          {labelBar()}
+          {props.viewMode === 'game' ? labelBar() : labelBarRP()}
         </Grid>
         {/* <Grid item xs={3} style={{ textAlign: 'center', alignSelf: 'center' }}>
           <Typography  style={{ marginRight: '16px' }}>
@@ -279,7 +289,7 @@ export default function PitchLive(props) {
                 <Scatter
                   name="Ball"
                   data={props.gameDataY.ball_list}
-                  fill="#fd9644"
+                  fill="#3d3f68"
                   isAnimationActive={false}
                   label="mapped_id"
                 >
@@ -295,7 +305,7 @@ export default function PitchLive(props) {
                 <Scatter
                   name="Target Team Y"
                   data={props.gameDataY.player_list_1}
-                  fill="#B4E0C8"
+                  fill={props.viewMode == 'game' ? '#B4E0C8' : '#ffc857'}
                   isAnimationActive={false}
                   onClick={props.handleDotClick}
                   cursor="pointer"
@@ -316,7 +326,7 @@ export default function PitchLive(props) {
                 <Scatter
                   name="Opponent Team Y"
                   data={props.gameDataY.player_list_2}
-                  fill="#FF7477"
+                  fill={props.viewMode == 'game' ? '#FF7477' : '#ffc857'}
                   isAnimationActive={false}
                   onClick={props.handleDotClick}
                   cursor="pointer"
@@ -336,66 +346,71 @@ export default function PitchLive(props) {
           ) : (
             <></>
           )}
-          {props.loading ? (
-            <></>
-          ) : (
-            <>
-              <Scatter
-                name="Ball X"
-                data={props.gameData.ball_list}
-                fill="#1976d2"
-                isAnimationActive={false}
-                label="mapped_id"
-              >
-                <LabelList
-                  fontSize={11}
-                  dataKey="mapped_id"
-                  fill="white"
-                  style={{ pointerEvents: 'none' }}
+          {props.gameData ? (
+            props.loading ? (
+              <></>
+            ) : (
+              <>
+                <Scatter
+                  name="Ball X"
+                  data={props.gameData.ball_list}
+                  fill="#1f2041"
+                  isAnimationActive={false}
+                  label="mapped_id"
                 >
-                  x
-                </LabelList>
-              </Scatter>
-              <Scatter
-                name="Target Team"
-                data={props.gameData.player_list_1}
-                fill="#55a87b"
-                isAnimationActive={false}
-                onClick={props.handleDotClick}
-                cursor="pointer"
-                //   content={renderGroup1Label}
-              >
-                {showNumbers ? (
                   <LabelList
                     fontSize={11}
                     dataKey="mapped_id"
                     fill="white"
                     style={{ pointerEvents: 'none' }}
-                  />
-                ) : (
-                  <></>
-                )}
-              </Scatter>
-              <Scatter
-                name="Opponent Team"
-                data={props.gameData.player_list_2}
-                fill="#e01a4f"
-                isAnimationActive={false}
-                onClick={props.handleDotClick}
-                cursor="pointer"
-              >
-                {showNumbers ? (
-                  <LabelList
-                    fontSize={11}
-                    dataKey="mapped_id"
-                    style={{ pointerEvents: 'none' }}
-                    fill="white"
-                  />
-                ) : (
-                  <></>
-                )}
-              </Scatter>
-            </>
+                  >
+                    x
+                  </LabelList>
+                </Scatter>
+                <Scatter
+                  name="Target Team"
+                  data={props.gameData.player_list_1}
+                  fill="#55a87b"
+                  fill={props.viewMode == 'game' ? '#55a87b' : '#1976d2'}
+                  isAnimationActive={false}
+                  onClick={props.handleDotClick}
+                  cursor="pointer"
+                  //   content={renderGroup1Label}
+                >
+                  {showNumbers ? (
+                    <LabelList
+                      fontSize={11}
+                      dataKey="mapped_id"
+                      fill="white"
+                      style={{ pointerEvents: 'none' }}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </Scatter>
+                <Scatter
+                  name="Opponent Team"
+                  data={props.gameData.player_list_2}
+                  fill={props.viewMode == 'game' ? '#e01a4f' : '#1976d2'}
+                  isAnimationActive={false}
+                  onClick={props.handleDotClick}
+                  cursor="pointer"
+                >
+                  {showNumbers ? (
+                    <LabelList
+                      fontSize={11}
+                      dataKey="mapped_id"
+                      style={{ pointerEvents: 'none' }}
+                      fill="white"
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </Scatter>
+              </>
+            )
+          ) : (
+            <></>
           )}
         </ScatterChart>
       </ResponsiveContainer>

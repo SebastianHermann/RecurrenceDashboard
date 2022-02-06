@@ -1,3 +1,5 @@
+import json
+from helper.rp_prep import downsample_rp
 from helper.frp_prep import create_meta_stable_rp
 from db.db_connection import DBConnection
 from helper.rp_prep import prep_recurrence_plot, prep_cross_recurrence_plot, create_recurrence_plot
@@ -5,6 +7,7 @@ from helper.rqa_prep import get_rqas
 from bson.json_util import loads, dumps
 from bson.objectid import ObjectId
 import time
+import numpy as np
 
 from threading import Thread
 
@@ -156,6 +159,47 @@ class RPS():
             return {"Error": e}
 
     @staticmethod
+    def get_meta_rp(id, data):
+        rps_collection = RPS.singleton()
+        start = time.time()
+        try:
+            result = rps_collection.find_one({"_id":  ObjectId(id)})
+            rp_meta = dict(result)
+
+            df_target = prep_recurrence_plot(data, rp_meta)
+            df_cross = None
+            if "cross" in rp_meta.get("rp_type"):
+                df_cross = prep_cross_recurrence_plot(data, rp_meta)
+
+            rp_meta["threshold"] = 18
+            rp, rp_original = create_recurrence_plot(
+                rp_meta, df_target, df_cross)
+
+            meta_rp_thrshld = 18
+            min_rec_points = 0.2
+            white_space_width = 45
+            [meta_rp, meta_rp_rec] = create_meta_stable_rp(
+                rp_original, min_rec_points, white_space_width, rps_collection, id)
+
+            meta_rp_downsampled = downsample_rp(meta_rp, 10)
+            meta_rp_downsampled = np.where(
+                meta_rp_downsampled == 1, 0, meta_rp_downsampled)
+
+            meta_data = {}
+            meta_data["meta_rp_id"] = id
+            meta_data["meta_downsample"] = 10
+            meta_data["meta_min_rec_points"] = min_rec_points
+            meta_data["meta_white_space_width"] = white_space_width
+
+            json_str = dumps(
+                {**meta_data, "meta_rp_data": meta_rp_downsampled.tolist()})
+            return json_str
+
+        except Exception as e:
+            print("An exception occurred ::", e)
+            return {"Error": e}
+
+    @staticmethod
     def delete_rp_infos(project_id, id=None):
         rps_collection = RPS.singleton()
         try:
@@ -231,9 +275,8 @@ class RPS():
             return {"Error": e}
 
     @staticmethod
-    def create_meta_rp(data, request_data):
+    def create_meta_rp(data, request_data, rp_id):
 
-        start = time.time()
         rps_collection = RPS.singleton()
 
         meta_rp_thrshld = 18
@@ -290,23 +333,18 @@ class RPS():
             rp, rp_original = create_recurrence_plot(
                 rp_meta, df_target, df_cross)
 
-            # rp_id = rps_collection.insert_one(rp_meta).inserted_id
-            # # allRps = rps_collection.find({"project_id": project_id})<
-            # result = rps_collection.find_one({"_id": ObjectId(rp_id)})
-
-            # Calculation for the rqa metrics
-            # if "threshold" in rp_meta["rp_type"] or "cross" in rp_meta["rp_type"]:
-            #     thread_a = Compute(rp_id, rp_original, rps_collection)
-            #     thread_a.start()
-
-            # json_str = dumps({**result, "data": rp.tolist()})
             [meta_rp, meta_rp_rec] = create_meta_stable_rp(
-                rp_original, min_rec_points, white_space_width)
-            [meta_rp_down, meta_rp_rec_down] = create_meta_stable_rp(
-                rp, min_rec_points, white_space_width)
-            json_str = dumps({"rp": rp.tolist(), "meta_rp": meta_rp.tolist(
-            ), "meta_rp_rec": meta_rp_rec.tolist(), "meta_rp_down": meta_rp_down.tolist(), "meta_rp_rec_down": meta_rp_rec_down.tolist()})
-            # print("RP created, RQA are calculated simultaneously", time.time()-start)
+                rp_original, min_rec_points, white_space_width, rps_collection, rp_id)
+
+            meta_rp_downsampled = downsample_rp(meta_rp, 10)
+
+            meta_data = {}
+            meta_data["meta_rp_id"] = rp_id
+            meta_data["meta_min_rec_points"] = min_rec_points
+            meta_data["meta_white_space_width"] = white_space_width
+
+            json_str = dumps(
+                {**meta_data, "meta_rp_data": meta_rp_downsampled.tolist()})
 
             return json_str
 

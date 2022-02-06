@@ -1,5 +1,6 @@
 from helper.rp_prep import create_recurrence_plot, prep_cross_recurrence_plot, prep_recurrence_plot
 import numpy as np
+from bson.objectid import ObjectId
 
 min_rec_points = 0.2
 white_space_width = 45
@@ -7,7 +8,7 @@ white_space_width = 45
 # [result_45, result_45_rec]= create_rectangle_matrix("Test",rec_thrshld_18, min_rec_points, white_space_width)
 
 
-def create_meta_stable_rp(thrshld_matrix, min_rec_points, width_white_lines):
+def create_meta_stable_rp(thrshld_matrix, min_rec_points, width_white_lines, rps_collection, rp_id):
 
     counter = 0
     c = []
@@ -82,38 +83,26 @@ def create_meta_stable_rp(thrshld_matrix, min_rec_points, width_white_lines):
     output_rec = np.where(output_rec == 2, 2, 0)
 
     result = output_rec + thrshld_matrix
+    # meta_rp, meta_rec
+    frp1_blue = sum(sum(output_rec))*0.5
+    frp1 = frp1_blue / len(output_rec)**2
+    # insert into db
+    query = {"_id": ObjectId(rp_id)}
+    newvalues = {"$set": {"frp1": frp1}}
+    rps_collection.update_one(query, newvalues)
 
-#     # PLOT THE RESULTS
-#     fig, axes = plt.subplots(1,2, figsize = (20,10))
-#     ax1, ax2 = axes
+    frp2_black = sum(sum(np.where(result == 3, 1, 0)))
+    frp2 = frp2_black / frp1_blue
+    # insert into db
+    query = {"_id": ObjectId(rp_id)}
+    newvalues = {"$set": {"frp2": frp2}}
+    rps_collection.update_one(query, newvalues)
 
-#     ax1.set_xticks([0, 900, 1800, 2700, 3600, 4500, 5399])
-#     ax1.set_xticklabels(['00:00', '00:15', '00:30', '00:45', '01:00','01:15','01:30'], fontsize=12)
-#     ax1.set_yticks([0, 900, 1800, 2700, 3600, 4500, 5399])
-#     ax1.set_yticklabels(['00:00', '00:15', '00:30', '00:45', '01:00','01:15','01:30'], fontsize=12)
-
-#     ax1.set_title(title+": Treshold 18")
-#     ax1.set_xlabel('Time [s]')
-#     ax1.set_ylabel('Time [s]')
-#     im = ax1.imshow(thrshld_matrix, cmap='binary')
-#     fig.colorbar(im, ax=ax1)
-
-#     plot_title = "Minimum "+str(100*min_rec_points)+"% recurrence points & "+ str(width_white_lines) + " min width of white lines"
-
-#     cmap = colors.ListedColormap(['white','white','cornflowerblue','black'])
-#     bounds=[0,1,2,3]
-#     norm = colors.BoundaryNorm(bounds, cmap.N)
-# #     ax2.set_title(plot_title)
-#     ax2.set_xticks([0, 900, 1800, 2700, 3600, 4500, 5399])
-#     ax2.set_xticklabels(['00:00', '00:15', '00:30', '00:45', '01:00','01:15','01:30'], fontsize=12)
-#     ax2.set_yticks([0, 900, 1800, 2700, 3600, 4500, 5399])
-#     ax2.set_yticklabels(['00:00', '00:15', '00:30', '00:45', '01:00','01:15','01:30'], fontsize=12)
-#     ax2.set_xlabel('Time [s]')
-#     ax2.set_ylabel('Time [s]')
-#     im2 = ax2.imshow(result, interpolation='nearest', origin='lower',cmap=cmap)
-#     ax2.invert_yaxis()
-#     fig.colorbar(im2, cmap=cmap, norm=norm, boundaries=bounds, ticks=[0,1,2,3],ax=ax2)
-
-#     plt.savefig(image_path+'Rechtecke/'+title+"_Thrshld_18_"+str(100-100*min_rec_points)+"_"+str(width_white_lines)+".png")
+    frp3_rr = sum(sum(thrshld_matrix))
+    frp3 = frp2_black / frp3_rr
+    # insert into db
+    query = {"_id": ObjectId(rp_id)}
+    newvalues = {"$set": {"frp3": frp3}}
+    rps_collection.update_one(query, newvalues)
 
     return result, output_rec
