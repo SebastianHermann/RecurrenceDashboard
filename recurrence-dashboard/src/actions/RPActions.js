@@ -79,3 +79,19 @@ export const GetRP = (request) => async (dispatch) => {
     });
   }
 };
+
+export const ClearRP = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: 'RP_FAIL',
+    });
+
+    dispatch({
+      type: 'RPS_CLEAR',
+    });
+  } catch (e) {
+    dispatch({
+      type: 'RP_FAIL',
+    });
+  }
+};

@@ -51,8 +51,12 @@ const ProjectCard = (props) => {
         </Grid>
 
         <Grid item xs={12} className="card-container-item">
-          <Typography className="title-5">4 Tactical Groups</Typography>
-          <Typography className="title-5">7 Recurrence Plots</Typography>
+          <Typography className="title-5">
+            {props.project.t_groups_amount} Tactical Groups
+          </Typography>
+          <Typography className="title-5">
+            {props.project.rp_amount} Recurrence Plots
+          </Typography>
         </Grid>
         <Grid item xs={12} className="card-container-item">
           <Button
@@ -98,6 +102,8 @@ export default function ProjectsMain() {
 
   const handleClose = () => {
     setOpenCreateDialog(false);
+    // dispatch(Projects.GetProjects(user));
+    // dispatch(Stats.GetAllStats());
   };
 
   useEffect(() => {

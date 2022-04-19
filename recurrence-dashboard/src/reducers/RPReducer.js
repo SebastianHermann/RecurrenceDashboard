@@ -34,6 +34,10 @@ const RPReducer = (state = DefaultState, action) => {
         selectedRP: action.payload,
         errorMsg: '',
       };
+    case 'RPS_CLEAR':
+      return {
+        ...DefaultState,
+      };
 
     case 'RPS_FAIL':
       return {

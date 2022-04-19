@@ -352,6 +352,7 @@ export default function TacticalGroups() {
   const handleEventSecond = (sec) => {
     setPlay(false);
     setGameSecond(sec);
+    setSliderValue(sec);
   };
 
   return (
@@ -369,7 +370,9 @@ export default function TacticalGroups() {
       >
         <Grid container item xs={12} style={{ padding: '24px 24px 0 24px' }}>
           <Grid item xs={8}>
-            <Typography className="subtitle-2">Project Title</Typography>
+            <Typography className="subtitle-2">
+              {project ? project.title : '...'}
+            </Typography>
             <Typography className="title-3" gutterBottom>
               Tactical Groups
             </Typography>
@@ -382,14 +385,14 @@ export default function TacticalGroups() {
             textAlign={'right'}
             style={{ marginBottom: '16px' }}
           >
-            <Button
+            {/* <Button
               variant="contained"
               startIcon={<AddIcon />}
               onClick={() => setOpenNewDialog(true)}
               className="add-button-small"
             >
               <span>New</span>
-            </Button>
+            </Button> */}
             {/* <IconButton
               color="primary"
               onClick={() => setOpenNewDialog(true)}
@@ -446,16 +449,23 @@ export default function TacticalGroups() {
         }}
       >
         <Grid container item xs={12} style={{ marginBottom: '24px' }}>
-          <Grid item xs={8}>
-            <Typography className="subtitle-2">Game 02</Typography>
+          <Grid item xs={4}>
+            <Typography className="subtitle-2">
+              Game {project ? project.game_id : '-'}
+            </Typography>
             <Typography className="title-4" style={{ fontWeight: 'bold' }}>
               Match Player
             </Typography>
           </Grid>
+          <Grid item xs={5} style={{ textAlign: 'left', color: 'darkgrey' }}>
+            {playerList1.length === 0 && playerList2.length === 0
+              ? 'To create a tactical group, click on some players and submit your selection.'
+              : ''}
+          </Grid>
 
           <Grid
             item
-            xs={4}
+            xs={3}
             style={{ textAlign: 'right', alignSelf: 'flex-end' }}
           >
             <Button
@@ -626,7 +636,10 @@ export default function TacticalGroups() {
       </Grid>
       <Grid item xs={3} container style={{ padding: '24px 24px 24px 0px' }}>
         <Grid item xs={12} style={{ marginBottom: '18px' }}>
-          <Typography className="subtitle-2">Game 02</Typography>
+          <Typography className="subtitle-2">
+            {/* Game {project ? project.game_id : '-'} */}
+            {stats ? stats.Date : '-'}
+          </Typography>
           <Typography className="title-4" style={{ fontWeight: 'bold' }}>
             Match Overview
           </Typography>

@@ -911,7 +911,7 @@ export default function RecurrenceAnalysis(props) {
                           fontWeight: '500',
                         }}
                       >
-                        {selectedRP.rqa.entr.toFixed(4)}
+                        {Math.abs(selectedRP.rqa.entr.toFixed(4))}
                       </div>
                     </div>
                   </Grid>
@@ -930,7 +930,7 @@ export default function RecurrenceAnalysis(props) {
                           fontWeight: '500',
                         }}
                       >
-                        {selectedRP.rqa['entr-v'].toFixed(4)}
+                        {Math.abs(selectedRP.rqa['entr-v'].toFixed(4))}
                       </div>
                     </div>
                   </Grid>

@@ -230,3 +230,19 @@ export const GetRP = (request) => async (dispatch) => {
     });
   }
 };
+
+export const ClearRQA = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: 'RP_FAIL',
+    });
+
+    dispatch({
+      type: 'RP_CLEAR',
+    });
+  } catch (e) {
+    dispatch({
+      type: 'RP_FAIL',
+    });
+  }
+};

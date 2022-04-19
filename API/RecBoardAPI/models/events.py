@@ -4,6 +4,16 @@ from bson.objectid import ObjectId
 
 
 class Events():
+
+    '''Event-Class
+    This class represents events on the application logic. 
+    An instance maps the data logic onto the application logic. 
+    Overall, all CRUD operations that are useful for the 
+    recboard system are implemented here.
+
+
+    '''
+
     collection = None
 
     def __init__(self):
@@ -20,6 +30,11 @@ class Events():
 
     @staticmethod
     def create_event(request_data):
+        '''Creates an event
+        >>>create_event(request_data)
+        <json_list with all events of the project>
+
+        '''
         event_collection = Events.singleton()
 
         try:
@@ -45,6 +60,11 @@ class Events():
 
     @staticmethod
     def get_events(id, project_id):
+        '''Returns one or all event of a specific project
+        >>>get_event(request_data)
+        <json_list with one or all events of a project>
+
+        '''
         event_collection = Events.singleton()
 
         try:
@@ -64,6 +84,10 @@ class Events():
 
     @staticmethod
     def delete_events(id, project_id, user_name="test"):
+        '''deletes one or all events of a project.
+        Is currently not used by the Recboard-Tool
+
+        '''
         event_collection = Events.singleton()
         try:
             if id == None:
@@ -85,6 +109,10 @@ class Events():
 
     @staticmethod
     def update_event(id, request_data, user_name="test"):
+        '''updates one or all events of a project.
+        Is currently not used by the Recboard-Tool
+
+        '''
         event_collection = Events.singleton()
 
         event = {}

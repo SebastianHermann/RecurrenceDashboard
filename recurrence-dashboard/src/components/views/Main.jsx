@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import * as Events from '../../actions/EventActions';
 import * as RPS from '../../actions/RPActions';
+import * as RQA from '../../actions/RQAActions';
 import * as Stats from '../../actions/StatsActions';
 import * as TGroups from '../../actions/TGroupActions';
 import * as Tracking from '../../actions/TrackingActions';
@@ -26,6 +27,9 @@ const SideNav = (props) => {
 
   const handleProjectsNavClick = () => {
     dispatch({ type: 'TRACKING_CLEAR' });
+    dispatch(RPS.ClearRP());
+    dispatch(RQA.ClearRQA());
+    // empty rp and selectedrp
     navigate('/projects');
   };
 

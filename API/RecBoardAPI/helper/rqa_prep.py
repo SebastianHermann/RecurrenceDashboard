@@ -2,167 +2,177 @@ import numpy as np
 from itertools import groupby
 from collections import Counter
 from bson.objectid import ObjectId
+import math
 ###### START: Preparation #####
 
+'''
+The following code belongs to an deprecated calculation logic and is therefore commented out
 
-def get_recurrence_chains(rec_mat_norm):
-    rec_chain = []
-    for row in rec_mat_norm:
-        chain = ' '
-        chain = chain.join(map(str, row))
-        chain = chain.replace(" ", "")
-        chain = chain.split("0")
-        chain = list(filter(None, chain))
-        rec_chain = rec_chain + chain
+'''
 
-    return rec_chain
+# def get_recurrence_chains(rec_mat_norm):
+#     rec_chain = []
+#     for row in rec_mat_norm:
+#         chain = ' '
+#         chain = chain.join(map(str, row))
+#         chain = chain.replace(" ", "")
+#         chain = chain.split("0")
+#         chain = list(filter(None, chain))
+#         rec_chain = rec_chain + chain
 
-
-def get_diagonal_chains(rec_mat_norm):
-    diags = [rec_mat_norm[::1, :].diagonal(
-        i) for i in range(-rec_mat_norm.shape[0]+1, rec_mat_norm.shape[1])]
-
-    return diags
+#     return rec_chain
 
 
-def wordListToFreqDict(rec_chain):
-    freq = [rec_chain.count(p) for p in rec_chain]
-    return dict(list(zip(rec_chain, freq)))  # freqdict
+# def get_diagonal_chains(rec_mat_norm):
+#     diags = [rec_mat_norm[::1, :].diagonal(
+#         i) for i in range(-rec_mat_norm.shape[0]+1, rec_mat_norm.shape[1])]
+
+#     return diags
 
 
-def sortFreqDict(freqdict):
-    freq = [(freqdict[key], key) for key in freqdict]
-    freq.sort()
-    freq.reverse()
-    return freq
+# def wordListToFreqDict(rec_chain):
+#     freq = [rec_chain.count(p) for p in rec_chain]
+#     return dict(list(zip(rec_chain, freq)))  # freqdict
 
 
-def get_frequency_of_data(freqdict):
-    result = []
-    for item in freqdict:
-        result.append((item[0], len(item[1])))
-    return result
+# def sortFreqDict(freqdict):
+#     freq = [(freqdict[key], key) for key in freqdict]
+#     freq.sort()
+#     freq.reverse()
+#     return freq
 
 
-def clean_data(freqdict):
-    freqdict = [i for i in freqdict if i[1] == 1]
-    return freqdict
+# def get_frequency_of_data(freqdict):
+#     result = []
+#     for item in freqdict:
+#         result.append((item[0], len(item[1])))
+#     return result
 
 
-def get_recurrence_freq(thrshld_mat):
-    rec_chains = get_recurrence_chains(thrshld_mat)  # GET RECURRENCE CHAINS
-    freqDict = wordListToFreqDict(rec_chains)
-    freqDict_sorted = sortFreqDict(freqDict)  # sorted
-    # Format: (Anzahl, Länge der Kette)
-    chain_freq = get_frequency_of_data(freqDict_sorted)
-
-    return chain_freq
+# def clean_data(freqdict):
+#     freqdict = [i for i in freqdict if i[1] == 1]
+#     return freqdict
 
 
-def get_recurrence_freq_diag(thrshld_mat):
-    rec_chains_diag = get_diagonal_chains(
-        thrshld_mat)  # GET DIAOGONAL RECURRENCE MATRIX
-    rec_chains_diag = get_recurrence_chains(
-        rec_chains_diag)  # GET RECURRENCE CHAINS
+# def get_recurrence_freq(thrshld_mat):
+#     rec_chains = get_recurrence_chains(thrshld_mat)  # GET RECURRENCE CHAINS
+#     freqDict = wordListToFreqDict(rec_chains)
+#     freqDict_sorted = sortFreqDict(freqDict)  # sorted
+#     # Format: (Anzahl, Länge der Kette)
+#     chain_freq = get_frequency_of_data(freqDict_sorted)
 
-    freqDict = wordListToFreqDict(rec_chains_diag)
-    freqDict_sorted = sortFreqDict(freqDict)  # sorted
-    # Format: (Anzahl, Länge der Kette)
-    chain_freq = get_frequency_of_data(freqDict_sorted)
-
-    return chain_freq
+#     return chain_freq
 
 
-def get_rr(chain_frequency):
-    rr_n = 0
-    # Hier müsste eine Anpassung vorgenommen werden, falls eine andere Matrix getestet werden soll.
-    rr_z = 5400**2
-    for item in chain_frequency:
-        rr_n += item[0]*item[1]
+# def get_recurrence_freq_diag(thrshld_mat):
+#     rec_chains_diag = get_diagonal_chains(
+#         thrshld_mat)  # GET DIAOGONAL RECURRENCE MATRIX
+#     rec_chains_diag = get_recurrence_chains(
+#         rec_chains_diag)  # GET RECURRENCE CHAINS
 
-    rr = rr_n / rr_z
-    return rr
+#     freqDict = wordListToFreqDict(rec_chains_diag)
+#     freqDict_sorted = sortFreqDict(freqDict)  # sorted
+#     # Format: (Anzahl, Länge der Kette)
+#     chain_freq = get_frequency_of_data(freqDict_sorted)
 
-# req_chain-Format: [(Anzahl1, Länge1), (Anzahl2, Länge2),...]
-# det = diagonal recurrence chains
-# lam = vertical recurrence chains
-
-# Der Algorithmus ist unabhängig von der Art der Matrix, wonach keine Unterscheidung zwischen diagonaler Kette und vertikaler Kette erfolgt
+#     return chain_freq
 
 
-def get_det_lam(req_chain, rr):
-    det_lam_n = 0
-    for item in req_chain:
-        if(item[1] < 3):
-            continue
-        else:
-            det_lam_n += item[0]*item[1]
+# def get_rr(chain_frequency):
+#     rr_n = 0
+#     # Hier müsste eine Anpassung vorgenommen werden, falls eine andere Matrix getestet werden soll.
+#     rr_z = 5400**2
+#     for item in chain_frequency:
+#         rr_n += item[0]*item[1]
 
-    det_lam = det_lam_n / rr
-    return det_lam
+#     rr = rr_n / rr_z
+#     return rr
 
-# req_chain-Format: [(Anzahl1, Länge1), (Anzahl2, Länge2),...]
-# Der Algorithmus ist unabhängig von der Art der Matrix, wonach keine Unterscheidung zwischen diagonaler Kette und vertikaler Kette erfolgt
+# # req_chain-Format: [(Anzahl1, Länge1), (Anzahl2, Länge2),...]
+# # det = diagonal recurrence chains
+# # lam = vertical recurrence chains
 
-
-def get_l_tt(req_chain):
-    l_tt_z = 0
-    l_tt_n = 0
-    for item in req_chain:
-        if(item[1] < 3):
-            continue
-        else:
-            l_tt_z += item[0]*item[1]
-            l_tt_n += item[0]
-
-    l_tt = l_tt_z / l_tt_n
-
-    return l_tt
+# # Der Algorithmus ist unabhängig von der Art der Matrix, wonach keine Unterscheidung zwischen diagonaler Kette und vertikaler Kette erfolgt
 
 
-def get_entr(chain_freq):
-    anzahl_ketten = sum(a for a, l in chain_freq)
-    entr = 0
+# def get_det_lam(req_chain, rr):
+#     det_lam_n = 0
+#     for item in req_chain:
+#         if(item[1] < 3):
+#             continue
+#         else:
+#             det_lam_n += item[0]*item[1]
 
-    for item in chain_freq:
-        if(item[1] < 3):
-            continue
-        else:
-            p = item[0] / anzahl_ketten
-            entr_p = p * np.log2(p)
-            entr += entr_p
+#     det_lam = det_lam_n / rr
+#     return det_lam
 
-    entr = entr*(-1)
-
-    return entr
+# # req_chain-Format: [(Anzahl1, Länge1), (Anzahl2, Länge2),...]
+# # Der Algorithmus ist unabhängig von der Art der Matrix, wonach keine Unterscheidung zwischen diagonaler Kette und vertikaler Kette erfolgt
 
 
-def create_rqa(thrshld_mat):
-    req_chain = get_recurrence_freq(thrshld_mat)
-    req_chain_diag = get_recurrence_freq_diag(thrshld_mat)
+# def get_l_tt(req_chain):
+#     l_tt_z = 0
+#     l_tt_n = 0
+#     for item in req_chain:
+#         if(item[1] < 3):
+#             continue
+#         else:
+#             l_tt_z += item[0]*item[1]
+#             l_tt_n += item[0]
 
-    rr = get_rr(req_chain)
-    det = get_det_lam(req_chain_diag, rr)
-    lam = get_det_lam(req_chain, rr)
-    l = get_l_tt(req_chain_diag)
-    tt = get_l_tt(req_chain)
-    entr = get_entr(req_chain_diag)
-    entr_vert = get_entr(req_chain)
+#     l_tt = l_tt_z / l_tt_n
 
-    rqa = {
-        "rr": rr,
-        "det": det,
-        "lam": lam,
-        "l": l,
-        "tt": tt,
-        "entr": entr,
-        "entr_vert": entr_vert
-    }
-
-    return rqa
+#     return l_tt
 
 
-#################################### v2 #########################################
+# def get_entr(chain_freq):
+#     anzahl_ketten = sum(a for a, l in chain_freq)
+#     entr = 0
+
+#     for item in chain_freq:
+#         if(item[1] < 3):
+#             continue
+#         else:
+#             p = item[0] / anzahl_ketten
+#             entr_p = p * np.log2(p)
+#             entr += entr_p
+
+#     entr = entr*(-1)
+
+#     return entr
+
+
+# def create_rqa(thrshld_mat):
+#     req_chain = get_recurrence_freq(thrshld_mat)
+#     req_chain_diag = get_recurrence_freq_diag(thrshld_mat)
+
+#     rr = get_rr(req_chain)
+#     det = get_det_lam(req_chain_diag, rr)
+#     lam = get_det_lam(req_chain, rr)
+#     l = get_l_tt(req_chain_diag)
+#     tt = get_l_tt(req_chain)
+#     entr = get_entr(req_chain_diag)
+#     entr_vert = get_entr(req_chain)
+
+#     rqa = {
+#         "rr": rr,
+#         "det": det,
+#         "lam": lam,
+#         "l": l,
+#         "tt": tt,
+#         "entr": entr,
+#         "entr_vert": entr_vert
+#     }
+
+#     return rqa
+
+
+# #################################### v2 #########################################
+
+'''
+Current calculation logic of all rqa-parameters
+'''
+
 
 def numpy_fillna(data):
     # Get lengths of each row of data
@@ -179,7 +189,7 @@ def numpy_fillna(data):
 
 def get_rqas(rp_thrsld, rps_collection, rp_id):
     rqa = {}
-    rr_n = np.sum(rp_thrsld)
+    rr_n = np.sum(rp_thrsld) - math.sqrt(2) * len(rp_thrsld)
     rr_z = len(rp_thrsld)**2
     rr = rr_n / rr_z
 
@@ -237,7 +247,7 @@ def get_rqas(rp_thrsld, rps_collection, rp_id):
         entr_p = p * np.log2(p)
         entr += entr_p
 
-    entr_v = entr*(-1)
+    entr_v = abs(entr)
     rqa["entr-v"] = entr_v
     # Insert entr-v to RP-ID
     query = {"_id": ObjectId(rp_id)}

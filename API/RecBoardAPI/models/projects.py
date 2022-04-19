@@ -44,10 +44,15 @@ class Projects():
     @staticmethod
     def get_project(id, user_name="test"):
         project_collection = Projects.singleton()
+        # tactical groups collection
+        # recurrence plots collection
         try:
             if id == None:
                 result = project_collection.find(
                     {"user_name": user_name})
+
+                print("result", result[0])
+
                 json_str = dumps(result)
 
                 return json_str
