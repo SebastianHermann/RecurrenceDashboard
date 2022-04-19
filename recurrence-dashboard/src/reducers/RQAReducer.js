@@ -79,6 +79,10 @@ const RQAReducer = (state = DefaultState, action) => {
         errorMsg: '',
         ...action.payload,
       };
+    case 'RP_CLEAR':
+      return {
+        ...DefaultState,
+      };
     case 'RP_FAIL':
       return {
         ...state,

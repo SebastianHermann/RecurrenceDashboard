@@ -5,7 +5,12 @@ from bson.objectid import ObjectId
 min_rec_points = 0.2
 white_space_width = 45
 
-# [result_45, result_45_rec]= create_rectangle_matrix("Test",rec_thrshld_18, min_rec_points, white_space_width)
+
+'''
+The following function is responsible for modelling the metastable plot. The plot is modelled by the information on the white lines, the local minimum recurrence rate as well as a specially used threshold of 18 metres.
+
+
+'''
 
 
 def create_meta_stable_rp(thrshld_matrix, min_rec_points, width_white_lines, rps_collection, rp_id):

@@ -5,6 +5,10 @@ import skimage.measure
 
 
 def create_relative_matrix(df):
+    '''
+    Creating the distance matrix using a data frame of tracking data
+
+    '''
     df = df[["x_norm", "y_norm"]]
 
     df_a = df[['x_norm', 'y_norm']].to_numpy()
@@ -15,6 +19,12 @@ def create_relative_matrix(df):
 
 
 def create_cross_relative_matrix(df, df_cross):
+    '''
+    Similar to the standard rp-process.
+    The difference is the second coordinate-input, which comes from
+    a different player.
+
+    '''
     df = df[["x_norm", "y_norm"]]
     df_cross = df_cross[["x_norm", "y_norm"]]
 
@@ -26,11 +36,23 @@ def create_cross_relative_matrix(df, df_cross):
 
 
 def create_thrshld_matrix(rec_mat_rel, threshold):
+    '''
+    First modelling step, where the distance matrix is compared against the recurrence threshold.
+
+    '''
     rec_mat_norm = (rec_mat_rel < threshold).astype(int)
     return rec_mat_norm
 
 
 def prep_recurrence_plot(df, rp_meta):
+    '''
+    Function for preparing the modelling process of the CROSS-recurrence plot.
+    Based on the meta data, which contains the information regarding 
+    the configurations, the necessary data gets prepared.
+    As a result, a pandas data frame is returned, that can be
+    used straightaway for the respective modelling purpose
+
+    '''
     df_result = None
     cond_1 = len(rp_meta["target_group_1"]) > 0
     cond_2 = len(rp_meta["target_group_2"]) > 0
@@ -66,6 +88,14 @@ def prep_recurrence_plot(df, rp_meta):
 
 
 def prep_cross_recurrence_plot(df, rp_meta):
+    '''
+    Function for preparing the modelling process of the CROSS-recurrence plot.
+    Based on the meta data, which contains the information regarding 
+    the configurations, the necessary data gets prepared.
+    As a result, a pandas data frame is returned, that can be
+    used straightaway for the respective modelling purpose
+
+    '''
     df_result = None
     cond_1 = len(rp_meta["cross_group_1"]) > 0
     cond_2 = len(rp_meta["cross_group_2"]) > 0
@@ -101,6 +131,10 @@ def prep_cross_recurrence_plot(df, rp_meta):
 
 
 def downsample_rp(rp, downsample_param):
+    '''
+    Function for downsampling the recurrence plot.
+
+    '''
     ds_rp = skimage.measure.block_reduce(
         rp, (downsample_param, downsample_param), np.median)
 
@@ -108,6 +142,10 @@ def downsample_rp(rp, downsample_param):
 
 
 def create_recurrence_plot(rp_meta, df, df_cross=None):
+    '''
+    Function for modelling the recurrence plot.
+
+    '''
 
     if rp_meta["calc_logic"] == "avg":
         df_result = df.groupby(["game_time_seconds"], as_index=False).mean()

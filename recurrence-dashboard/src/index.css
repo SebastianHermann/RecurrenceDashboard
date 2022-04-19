@@ -228,7 +228,7 @@ code {
 }
 
 .active {
-  color: #1976d2 !important;
+  color: rgb(25, 118, 210) !important;
   font-size: 14px !important;
   font-weight: 400 !important;
 }
@@ -240,7 +240,83 @@ code {
 }
 
 .css-j204z7-MuiFormControlLabel-root .MuiFormControlLabel-label {
-  color: #777779 !important;
+  color: rgb(119, 119, 121) !important;
   font-size: 14px !important;
   font-weight: 400 !important;
+}
+
+.test-class {
+  /* width: 100% !important; */
+  margin: 48px !important;
+  display: inline-block;
+}
+
+.pdf-header {
+  color: #1f2041 !important;
+  font-size: 24px !important;
+  font-weight: 500 !important;
+  margin: 48px !important;
+  width: 50%;
+}
+
+.pdf-comments {
+  color: #1f2041 !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  margin: 48px !important;
+}
+
+.pdf-date {
+  color: rgb(31, 32, 65) !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  position: absolute;
+  right: 48px;
+  margin: 48px !important;
+}
+
+.pdf-table {
+  font-size: 16px !important;
+  margin: 48px !important;
+  border: solid 1px white !important;
+  background: #1976d2 !important;
+}
+
+.pdf-title-1 {
+  color: #1f2041 !important;
+  font-size: 32px !important;
+  font-weight: bold !important;
+}
+
+.pdf-title-2 {
+  color: #1f2041 !important;
+  font-size: 24px !important;
+  font-weight: bold !important;
+}
+
+.pdf-title-3 {
+  color: #1f2041 !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+.pdf-title-4 {
+  color: #1f2041 !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+}
+
+.pdf-subtitle-1 {
+  color: rgb(167 168 171) !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+.pdf-text-1 {
+  color: #1f2041 !important;
+  font-size: 14px !important;
+}
+
+.pdf-container {
+  line-height: 0% !important;
 }

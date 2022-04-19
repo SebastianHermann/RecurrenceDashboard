@@ -68,6 +68,21 @@ class TacticalGroups():
             return {"Error": e}
 
     @staticmethod
+    def count_t_groups(id, user_name="test"):
+        t_group_collection = TacticalGroups.singleton()
+        try:
+            result = t_group_collection.countDocuments(
+                {"_id": ObjectId(id)})
+            json_str = dumps(result)
+            print(json_str)
+
+            return json_str
+
+        except Exception as e:
+            print("An exception occurred ::", e)
+            return {"Error": e}
+
+    @staticmethod
     def delete_t_groups(id, project_id, user_name="test"):
         t_group_collection = TacticalGroups.singleton()
         try:
